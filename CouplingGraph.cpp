@@ -1,11 +1,15 @@
 #include "CouplingGraph.h"
 
+#include <utility>
+
 #include "util.h"
 
 vector<string> emptyNodeSet;
 
-CouplingGraph::CouplingGraph(string name) : name{std::move(name)} {
+CouplingGraph::CouplingGraph(string name) : name{std::move(name)} {}
 
+const string& CouplingGraph::getName() const {
+    return name;
 }
 
 const vector<string>& CouplingGraph::getNodeSet() {

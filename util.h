@@ -1,11 +1,14 @@
 #pragma once
 
-#include<random>
+#include <random>
 #include <string>
 #include <vector>
 #include <sstream>
 #include <cstring>
 #include <string>
+#include <unordered_map>
+#include <functional>
+#include <utility>
 
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (unsigned int i = 0; i < (n); ++i)
@@ -16,6 +19,27 @@
 //#define randRange(upperBound) std::uniform_int_distribution<int>(0, upperBound)(my_randomEngine)
 
 double square(double val);
+
+
+// from https://stackoverflow.com/q/2590677/4354423
+template <class T>
+inline void hash_combine(std::size_t& seed, const T& v) {
+    std::hash<T> hasher;
+    seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
+}
+
+// from https://stackoverflow.com/a/32685618/4354423
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator () (const std::pair<T1,T2> &p) const {
+        auto h1 = std::hash<T1>{}(p.first);
+        auto h2 = std::hash<T2>{}(p.second);
+
+        // Mainly for demonstration purposes, i.e. works but is overly simple
+        // In the real world, use sth. like boost.hash_combine
+        hash_combine(h1, h2);
+    }
+};
 
 
 #define startsWith(a, b) ((a).rfind((b), 0) == 0)

@@ -11,7 +11,9 @@ private:
     string name;
 
 public:
-    explicit CouplingGraph(string  name);
+    explicit CouplingGraph(string name);
+
+    [[nodiscard]] const string& getName() const;
 
     virtual const vector<string>& getNodeSet();
     virtual float getNormalizedSupport(const string& node) = 0;

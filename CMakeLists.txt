@@ -15,7 +15,7 @@ add_executable(coupling_graphs main.cpp CouplingGraph.cpp util.cpp
         graphMixins/NormalizeCouplingWithChildren.cpp graphMixins/NormalizeCouplingWithChildren.h
         ExplicitCouplingGraph.cpp ExplicitCouplingGraph.h
         SimilarityCouplingGraph.cpp SimilarityCouplingGraph.h
-        ModuleDistanceCouplingGraph.cpp ModuleDistanceCouplingGraph.h)
+        ModuleDistanceCouplingGraph.cpp ModuleDistanceCouplingGraph.h WeightCombinedGraph.cpp WeightCombinedGraph.h ResultCachedGraph.cpp ResultCachedGraph.h)
 
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
