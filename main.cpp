@@ -6,10 +6,22 @@
 #include "graph/WeightCombinedGraph.h"
 #include "graph/ResultCachedGraph.h"
 #include "util.h"
+#include "GraphStorage.h"
+#include "CommandExecutor.h"
 
 using namespace std;
 
-int main() {
+
+void mainLoop() {
+    CommandExecutor executor;
+    string line;
+    while (getline(cin, line)) {
+        executor.tryExecuteCommand(line);
+    }
+}
+
+int main(int argc, const char* argv[]) {
+    mainLoop();
     cout << "Hello, World!" << endl;
 
     ExplicitCouplingGraph g("foo");

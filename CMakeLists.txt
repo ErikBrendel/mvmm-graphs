@@ -20,7 +20,7 @@ add_executable(coupling_graphs
         graph/ModuleDistanceCouplingGraph.cpp
         graph/WeightCombinedGraph.cpp
         graph/ResultCachedGraph.cpp
-        )
+        GraphStorage.cpp GraphStorage.h CommandExecutor.cpp CommandExecutor.h)
 
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
