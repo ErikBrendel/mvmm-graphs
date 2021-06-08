@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GraphStorage.h"
+#include "DataStorage.h"
 
 class CommandExecutor {
 private:
-    GraphStorage graphStorage;
+    DataStorage dataStorage;
 
 public:
     void tryExecuteCommand(const string& command);

@@ -6,7 +6,7 @@
 #include "graph/WeightCombinedGraph.h"
 #include "graph/ResultCachedGraph.h"
 #include "util.h"
-#include "GraphStorage.h"
+#include "DataStorage.h"
 #include "CommandExecutor.h"
 
 using namespace std;

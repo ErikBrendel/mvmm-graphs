@@ -21,7 +21,6 @@ public:
 
     void save(const string& repoName);
     static shared_ptr<CouplingGraph> load(const string& repoName, const string& name);
-    static string picklePath(const string& repoName, const string& name);
 
     void plaintextSave(const string& repoName);
 
@@ -29,6 +28,9 @@ public:
     virtual void printStatistics() = 0;
 
     float howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet, const vector<string>& allNodes);
+
+private:
+    static string picklePath(const string& repoName, const string& name);
 
 public:
     static string getParent(const string& node);
