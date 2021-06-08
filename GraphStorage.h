@@ -22,6 +22,7 @@ public:
     int load(const string& repoName, const string& name);
     void save(int g, const string& repoName);
     [[nodiscard]] const shared_ptr<CouplingGraph>& get(int g) const;
+    [[nodiscard]] const shared_ptr<CouplingGraph>& get(const string& gString) const;
 
     int createExplicit(const string& name);
     int createSimilarity(const string& name);

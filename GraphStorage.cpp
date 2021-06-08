@@ -5,7 +5,7 @@ int GraphStorage::load(const string& repoName, const string& name) {
 }
 
 void GraphStorage::save(int g, const string& repoName) {
-    graphArray[g]->save(repoName);
+    get(g)->save(repoName);
 }
 
 const shared_ptr<CouplingGraph>& GraphStorage::get(int g) const {
@@ -13,6 +13,10 @@ const shared_ptr<CouplingGraph>& GraphStorage::get(int g) const {
         throw runtime_error("Graph index " + to_string(g) + " out of range!");
     }
     return graphArray[g];
+}
+
+const shared_ptr<CouplingGraph>& GraphStorage::get(const string& gString) const {
+    return get(stoi(gString));
 }
 
 int GraphStorage::createExplicit(const string& name) {

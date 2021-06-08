@@ -46,6 +46,7 @@ struct pair_hash {
 
 
 #define startsWith(a, b) ((a).rfind((b), 0) == 0)
+#define contains(a, b) ((a).find((b), 0) != std::string::npos)
 
 
 // string split and join functions from here:
