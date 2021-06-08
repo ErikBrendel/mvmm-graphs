@@ -1,0 +1,22 @@
+cmake_minimum_required(VERSION 3.17)
+project(coupling_graphs)
+
+set(CMAKE_CXX_STANDARD 17)
+
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+
+add_executable(coupling_graphs main.cpp CouplingGraph.cpp util.cpp
+        graphMixins/NormalizeSupport.inl graphMixins/NormalizeSupport.h
+        NodeSetCouplingGraph.cpp NodeSetCouplingGraph.h
+        graphMixins/NormalizeSupportWithChildren.inl graphMixins/NormalizeSupportWithChildren.h
+        graphMixins/NormalizeCouplingWithChildren.inl graphMixins/NormalizeCouplingWithChildren.h
+        ExplicitCouplingGraph.cpp ExplicitCouplingGraph.h
+        )
+
+
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+find_package(Threads REQUIRED)
+target_link_libraries(coupling_graphs PRIVATE Threads::Threads)
