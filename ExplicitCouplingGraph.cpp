@@ -1,6 +1,8 @@
 #include "ExplicitCouplingGraph.h"
+#include "util.h"
 
 #include <iostream>
+#include <algorithm>
 
 ExplicitCouplingGraph::ExplicitCouplingGraph(const string& name)
     : NodeSetCouplingGraph(name) {}
@@ -179,4 +181,16 @@ string ExplicitCouplingGraph::plaintextContent() {
 
 void ExplicitCouplingGraph::printStatistics() {
     cout << plaintextContent() << endl;
+}
+
+vector<string> ExplicitCouplingGraph::getChildren(const string& node) {
+    return NodeSetCouplingGraph::getChildren(node);
+}
+
+float ExplicitCouplingGraph::getNormalizedSupport(const string& node) {
+    return NormalizeSupport::getNormalizedSupport(node);
+}
+
+float ExplicitCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
+    return NormalizeCouplingWithChildren::getNormalizedCoupling(a, b);
 }

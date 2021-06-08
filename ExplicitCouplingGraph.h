@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class ExplicitCouplingGraph : public NormalizeCouplingWithChildren<NormalizeSupportWithChildren<NodeSetCouplingGraph>> {
+class ExplicitCouplingGraph : public NormalizeCouplingWithChildren, public NormalizeSupportWithChildren, public NodeSetCouplingGraph {
 private:
     vector<float> supports;
     vector<vector<pair<uint, float>>> adj;
@@ -37,6 +37,10 @@ public:
 
     string plaintextContent() override;
     void printStatistics() override;
+
+    vector<string> getChildren(const string &node) override;
+    float getNormalizedSupport(const string& node) override;
+    float getNormalizedCoupling(const string& a, const string& b) override;
 
 private:
     uint getNodeIndex(const string& node);

@@ -5,8 +5,7 @@
 
 using namespace std;
 
-template<typename BASE>
-float NormalizeSupport<BASE>::getNormalizedSupport(const string& node) {
+float NormalizeSupport::getNormalizedSupport(const string& node) {
     auto cacheEntry = normalizedSupportPerNodeCache.find(node);
     if (cacheEntry != normalizedSupportPerNodeCache.end()) {
         return cacheEntry->second;
@@ -23,10 +22,9 @@ float NormalizeSupport<BASE>::getNormalizedSupport(const string& node) {
     return result;
 }
 
-template<typename BASE>
-pair<float, float> NormalizeSupport<BASE>::getAbsoluteSupportMedianAndMax() {
+pair<float, float> NormalizeSupport::getAbsoluteSupportMedianAndMax() {
     if (medianMaximumCache.second == 0) {
-        vector<string> nodes = *getNodeSet();
+        vector<string> nodes = getNodeSet();
         vector<float> supports(nodes.size());
         rep(i, nodes.size()) {
             supports[i] = getAbsoluteSupport(nodes[i]);

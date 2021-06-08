@@ -1,12 +1,12 @@
 #include "NormalizeCouplingWithChildren.h"
 
 #include "../util.h"
+#include "../CouplingGraph.h"
 #include <unordered_set>
 
 using namespace std;
 
-template<typename BASE>
-vector<string> NormalizeCouplingWithChildren<BASE>::getCouplingCandidates(const string& node, bool addPredecessors) {
+vector<string> NormalizeCouplingWithChildren::getCouplingCandidates(const string& node, bool addPredecessors) {
     vector<string> thisAndDescendants = getSelfAndDescendants(node);
 
     vector<string> directCouplingCandidates;
@@ -31,23 +31,20 @@ vector<string> NormalizeCouplingWithChildren<BASE>::getCouplingCandidates(const 
     return resultVec;
 }
 
-template<typename BASE>
-vector<string> NormalizeCouplingWithChildren<BASE>::getSelfAndDescendants(const string& node) {
+vector<string> NormalizeCouplingWithChildren::getSelfAndDescendants(const string& node) {
     vector<string> result;
     getSelfAndDescendentsRec(node, result);
     return result;
 }
 
-template<typename BASE>
-void NormalizeCouplingWithChildren<BASE>::getSelfAndDescendentsRec(const string& node, vector<string>& result) {
+void NormalizeCouplingWithChildren::getSelfAndDescendentsRec(const string& node, vector<string>& result) {
     result.push_back(node);
     for (const auto& child: getChildren(node)) {
         getSelfAndDescendentsRec(child, result);
     }
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getDirectMultiCoupling(const string& a, const vector<string>& others) {
+float NormalizeCouplingWithChildren::getDirectMultiCoupling(const string& a, const vector<string>& others) {
     float result = 0;
     for (const auto& b : others) {
         result += getDirectCoupling(a, b);
@@ -55,13 +52,11 @@ float NormalizeCouplingWithChildren<BASE>::getDirectMultiCoupling(const string& 
     return result;
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getRelativeCoupling(const string& a, const string& b) {
+float NormalizeCouplingWithChildren::getRelativeCoupling(const string& a, const string& b) {
     return getRelativeMultiDirectCoupling(a, getSelfAndDescendants(b));
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getRelativeMultiCoupling(const string& a, const vector<string>& others) {
+float NormalizeCouplingWithChildren::getRelativeMultiCoupling(const string& a, const vector<string>& others) {
     vector<string> directOthers;
     for (const auto& other: others) {
         getSelfAndDescendentsRec(other, directOthers);
@@ -69,8 +64,7 @@ float NormalizeCouplingWithChildren<BASE>::getRelativeMultiCoupling(const string
     return getRelativeMultiDirectCoupling(a, directOthers);
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getRelativeMultiDirectCoupling(const string& a, const vector<string>& others) {
+float NormalizeCouplingWithChildren::getRelativeMultiDirectCoupling(const string& a, const vector<string>& others) {
     if (others.empty()) {
         return 0;
     }
@@ -81,8 +75,7 @@ float NormalizeCouplingWithChildren<BASE>::getRelativeMultiDirectCoupling(const 
     return result;
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getTotalRelativeCoupling(const string& a) {
+float NormalizeCouplingWithChildren::getTotalRelativeCoupling(const string& a) {
     auto cacheElement = total_relative_coupling_cache.find(a);
     if (cacheElement != total_relative_coupling_cache.end()) {
         return cacheElement->second;
@@ -94,8 +87,7 @@ float NormalizeCouplingWithChildren<BASE>::getTotalRelativeCoupling(const string
     return total_coupling;
 }
 
-template<typename BASE>
-float NormalizeCouplingWithChildren<BASE>::getNormalizedCoupling(const string& a, const string& b) {
+float NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, const string& b) {
     // TODO         if a not in self.g or b not in self.g: return 0
     float targetCoupling = getRelativeCoupling(a, b);
     if (targetCoupling == 0) return 0;
