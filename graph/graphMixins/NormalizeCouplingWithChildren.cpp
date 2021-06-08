@@ -1,6 +1,6 @@
 #include "NormalizeCouplingWithChildren.h"
 
-#include "../util.h"
+#include "../../util.h"
 #include "../CouplingGraph.h"
 #include <unordered_set>
 

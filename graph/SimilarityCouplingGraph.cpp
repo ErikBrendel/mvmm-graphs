@@ -1,6 +1,6 @@
 #include <iostream>
 #include "SimilarityCouplingGraph.h"
-#include "util.h"
+#include "../util.h"
 
 SimilarityCouplingGraph::SimilarityCouplingGraph(const string& name) : CouplingGraph(name) {}
 

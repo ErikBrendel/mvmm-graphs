@@ -37,7 +37,10 @@ struct pair_hash {
 
         // Mainly for demonstration purposes, i.e. works but is overly simple
         // In the real world, use sth. like boost.hash_combine
-        hash_combine(h1, h2);
+        size_t seed = 0;
+        hash_combine(seed, h1);
+        hash_combine(seed, h2);
+        return seed;
     }
 };
 

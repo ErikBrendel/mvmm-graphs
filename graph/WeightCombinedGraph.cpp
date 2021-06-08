@@ -1,6 +1,6 @@
 #include <iostream>
 #include "WeightCombinedGraph.h"
-#include "util.h"
+#include "../util.h"
 
 vector<string> getGraphNodeSetCombination(const vector<shared_ptr<CouplingGraph>>& graphs) {
     unordered_set<string> uniqueData;

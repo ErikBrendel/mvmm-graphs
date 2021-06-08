@@ -1,18 +1,20 @@
 #include <iostream>
 
-#include "ExplicitCouplingGraph.h"
-#include "SimilarityCouplingGraph.h"
-#include "ModuleDistanceCouplingGraph.h"
-#include "WeightCombinedGraph.h"
-#include "ResultCachedGraph.h"
+#include "graph/ExplicitCouplingGraph.h"
+#include "graph/SimilarityCouplingGraph.h"
+#include "graph/ModuleDistanceCouplingGraph.h"
+#include "graph/WeightCombinedGraph.h"
+#include "graph/ResultCachedGraph.h"
+#include "util.h"
+
+using namespace std;
 
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    cout << "Hello, World!" << endl;
 
     ExplicitCouplingGraph g("foo");
     SimilarityCouplingGraph g2("bar");
     ModuleDistanceCouplingGraph g3;
-    
 
     return 0;
 }

@@ -2,7 +2,7 @@
 
 #include <utility>
 
-#include "util.h"
+#include "../util.h"
 
 vector<string> emptyNodeSet;
 

@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "util.h"
+#include "../util.h"
 
 int path_module_distance(const string& a, const string& b) {
     if (a == b) return 0;

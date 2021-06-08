@@ -8,14 +8,19 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
 
-add_executable(coupling_graphs main.cpp CouplingGraph.cpp util.cpp
-        graphMixins/NormalizeSupport.cpp graphMixins/NormalizeSupport.h
-        NodeSetCouplingGraph.cpp NodeSetCouplingGraph.h
-        graphMixins/NormalizeSupportWithChildren.cpp graphMixins/NormalizeSupportWithChildren.h
-        graphMixins/NormalizeCouplingWithChildren.cpp graphMixins/NormalizeCouplingWithChildren.h
-        ExplicitCouplingGraph.cpp ExplicitCouplingGraph.h
-        SimilarityCouplingGraph.cpp SimilarityCouplingGraph.h
-        ModuleDistanceCouplingGraph.cpp ModuleDistanceCouplingGraph.h WeightCombinedGraph.cpp WeightCombinedGraph.h ResultCachedGraph.cpp ResultCachedGraph.h)
+add_executable(coupling_graphs
+        main.cpp util.cpp
+        graph/CouplingGraph.cpp
+        graph/graphMixins/NormalizeSupport.cpp
+        graph/NodeSetCouplingGraph.cpp
+        graph/graphMixins/NormalizeSupportWithChildren.cpp
+        graph/graphMixins/NormalizeCouplingWithChildren.cpp
+        graph/ExplicitCouplingGraph.cpp
+        graph/SimilarityCouplingGraph.cpp
+        graph/ModuleDistanceCouplingGraph.cpp
+        graph/WeightCombinedGraph.cpp
+        graph/ResultCachedGraph.cpp
+        )
 
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

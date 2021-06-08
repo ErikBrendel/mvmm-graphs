@@ -5,7 +5,7 @@
 #include "NodeSetCouplingGraph.h"
 
 #include "iostream"
-#include "util.h"
+#include "../util.h"
 
 using namespace std;
 

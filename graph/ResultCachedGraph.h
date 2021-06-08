@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CouplingGraph.h"
-#include "util.h"
+#include "../util.h"
 
 #include <unordered_map>
 
