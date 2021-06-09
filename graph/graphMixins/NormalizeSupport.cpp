@@ -18,7 +18,7 @@ float NormalizeSupport::getNormalizedSupport(const string& node) {
     } else {
         result = 0.5f + (0.5f * (absSupp - median) / (maximum - median));
     }
-    cacheEntry->second = result;
+    normalizedSupportPerNodeCache[node] = result;
     return result;
 }
 

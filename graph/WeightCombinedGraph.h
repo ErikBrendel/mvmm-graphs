@@ -20,6 +20,8 @@ private:
 public:
     explicit WeightCombinedGraph(const vector<shared_ptr<CouplingGraph>>& graphs, const vector<float>& weights = {});
 
+    void setWeights(const vector<float>& newWeights);
+
     const vector<string> & getNodeSet() override;
     float getNormalizedSupport(const string &node) override;
     float getNormalizedCoupling(const string &a, const string &b) override;

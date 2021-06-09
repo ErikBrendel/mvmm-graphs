@@ -83,12 +83,15 @@ float NormalizeCouplingWithChildren::getTotalRelativeCoupling(const string& a) {
 
     vector<string> aCandidates = getCouplingCandidates(a, false);
     float total_coupling = getRelativeMultiDirectCoupling(a, aCandidates);
-    cacheElement->second = total_coupling;
+    total_relative_coupling_cache[a] = total_coupling;
     return total_coupling;
 }
 
 float NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, const string& b) {
-    // TODO         if a not in self.g or b not in self.g: return 0
+    const auto& nodeSet = getNodeSet();
+    if (find(all(nodeSet), a) == nodeSet.end() || find(all(nodeSet), b) == nodeSet.end()) {
+        return 0;
+    }
     float targetCoupling = getRelativeCoupling(a, b);
     if (targetCoupling == 0) return 0;
     float totalCoupling = getTotalRelativeCoupling(a);

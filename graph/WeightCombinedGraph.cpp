@@ -23,6 +23,10 @@ WeightCombinedGraph::WeightCombinedGraph(const vector<shared_ptr<CouplingGraph>>
     }
 }
 
+void WeightCombinedGraph::setWeights(const vector<float>& newWeights) {
+    weights = newWeights;
+}
+
 const vector<string>& WeightCombinedGraph::getNodeSet() {
     if (combinedNodeSet.empty()) {
         combinedNodeSet = getGraphNodeSetCombination(graphs);

@@ -9,7 +9,7 @@ using namespace std;
 
 void printHelpFn();
 
-vector<tuple<string, string, function<void(DataStorage& dataStorage, const vector<string>& args)>>> handlers = {
+static const vector<tuple<string, string, function<void(DataStorage& dataStorage, const vector<string>& args)>>> handlers = {
         {"help", "", [](DataStorage& dataStorage, const vector<string>& args) {
             printHelpFn();
         }},
@@ -88,6 +88,62 @@ vector<tuple<string, string, function<void(DataStorage& dataStorage, const vecto
             vector<string> nodeSet(args.begin() + 3, args.end());
             float result = g->howWellPredictsMissingNode(*ns, args[2], nodeSet);
             cout << result << endl;
+        }},
+        {"explicitAdd", "graphId a b delta", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->add(args[1], args[2], stof(args[3]));
+        }},
+        {"explicitAddSupport", "graphId node delta", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->addSupport(args[1], stof(args[2]));
+        }},
+        {"explicitAddAndSupport", "graphId a b delta", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->addAndSupport(args[1], args[2], stof(args[3]));
+        }},
+        {"explicitCutoffEdges", "graphId minimumWeight", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->cutoffEdges(stof(args[1]));
+        }},
+        {"explicitPropagateDown", "graphId layers weightFactor", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->propagateDown(stoi(args[1]), stof(args[2]));
+        }},
+        {"explicitDilate", "graphId iterations weightFactor", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->dilate(stoi(args[1]), stof(args[2]));
+        }},
+        {"similarityAddNode", "graphId node coords... support", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& similarityGraph = dynamic_pointer_cast<SimilarityCouplingGraph>(graph);
+            ensure(similarityGraph != nullptr, "Can only be used on similarity graphs!")
+            vector<float> coords;
+            for (int i = 2; i < args.size() - 1; i++) {
+                coords.push_back(stof(args[i]));
+            }
+            similarityGraph->addNode(args[1], coords, stof(args.back()));
+        }},
+        {"combinedSetWeights", "graphId weights...", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& combinedGraph = dynamic_pointer_cast<WeightCombinedGraph>(graph);
+            ensure(combinedGraph != nullptr, "Can only be used on weight-combined graphs!")
+            vector<float> weights;
+            for (int i = 1; i < args.size(); i++) {
+                weights.push_back(stof(args[i]));
+            }
+            combinedGraph->setWeights(weights);
         }},
 };
 

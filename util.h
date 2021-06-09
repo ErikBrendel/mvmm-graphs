@@ -58,6 +58,7 @@ struct pair_hash {
 // and character arrays
 template<class S, class T>
 std::string join(std::vector<T>& elems, S& delim) {
+    if (elems.empty()) return "";
     std::stringstream ss;
     typename std::vector<T>::iterator e = elems.begin();
     ss << *e++;

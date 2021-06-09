@@ -156,7 +156,7 @@ uint ExplicitCouplingGraph::getNodeIndex(const string& node) {
     supports.push_back(0);
     adj.emplace_back();
     i2node.push_back(node);
-    found->second = result;
+    node2i[node] = result;
     return result;
 }
 
