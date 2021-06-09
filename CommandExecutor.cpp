@@ -201,6 +201,8 @@ void CommandExecutor::executeCommand(const string& command) {
                 return;
             }
             get<2>(h)(dataStorage, parts);
+            cout.flush();
+            cerr.flush();
             return;
         }
     }
