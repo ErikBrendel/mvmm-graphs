@@ -74,7 +74,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             auto nodes = dataStorage.getG(args[0])->getNodeSet();
             cout << RESULT;
             rep(i, nodes.size()) {
-                if (i > 0) cout << " ";
+                if (i > 0) cout << "|";
                 cout << nodes[i];
             }
             cout << endl;
@@ -95,7 +95,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             const auto& nodes = *dataStorage.getNodeSet(args[0]);
             cout << RESULT;
             rep(i, nodes.size()) {
-                if (i != 0) cout << " ";
+                if (i != 0) cout << "|";
                 cout << nodes[i];
             }
             cout << endl;
