@@ -25,6 +25,13 @@ void ExplicitCouplingGraph::addI(uint a, uint b, float delta) {
     } else {
         existingConnection->second += delta;
     }
+    edgeList = adj[b];
+    existingConnection = find_if(all(edgeList), [=](const pair<uint, float>& e){return e.first == a;});
+    if (existingConnection == edgeList.end()) {
+        edgeList.emplace_back(a, delta);
+    } else {
+        existingConnection->second += delta;
+    }
 }
 
 float ExplicitCouplingGraph::get(const string& a, const string& b) {
