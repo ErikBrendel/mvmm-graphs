@@ -42,6 +42,5 @@ const vector<string>& NodeSetCouplingGraph::getChildren(const string& node) {
             return noChildren;
         }
     }
-    cout << "children of " << node << ": " << found->second << endl;
     return found->second;
 }
