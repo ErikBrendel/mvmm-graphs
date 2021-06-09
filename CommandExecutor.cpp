@@ -14,23 +14,28 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             printHelpFn();
         }},
         {"load", "repoName name storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.load(args[0], args[1], args[2]) << endl;
+            int result = dataStorage.load(args[0], args[1], args[2]);
+            cout << RESULT << result << endl;
         }},
         {"save", "graphId repoName storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.save(stoi(args[0]), args[1], args[2]);
         }},
 
         {"createExplicit", "name", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.createExplicit(args[0]) << endl;
+            int result = dataStorage.createExplicit(args[0]);
+            cout << RESULT << result << endl;
         }},
         {"createSimilarity", "name", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.createSimilarity(args[0]) << endl;
+            int result = dataStorage.createSimilarity(args[0]);
+            cout << RESULT << result << endl;
         }},
         {"createModuleDistance", "", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.createModuleDistance() << endl;
+            int result = dataStorage.createModuleDistance();
+            cout << RESULT << result << endl;
         }},
         {"createCached", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.createCached(stoi(args[0])) << endl;
+            int result = dataStorage.createCached(stoi(args[0]));
+            cout << RESULT << result << endl;
         }},
         {"createCombination", "graphIds...", [](DataStorage& dataStorage, const vector<string>& args) {
             ensure(!args.empty(), "Need to specify at least one graph!")
@@ -38,7 +43,8 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             for (const auto& arg: args) {
                 graphs.push_back(stoi(arg));
             }
-            cout << RESULT << dataStorage.createCombination(graphs) << endl;
+            int result = dataStorage.createCombination(graphs);
+            cout << RESULT << result << endl;
         }},
         {"createCombinationWeights", "graphIds... weights...", [](DataStorage& dataStorage, const vector<string>& args) {
             ensure(!args.empty(), "Need to specify at least one graph!")
@@ -52,14 +58,17 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             for (int i = graphAmount; i < args.size(); ++i) {
                 weights.push_back(stof(args[i]));
             }
-            cout << RESULT << dataStorage.createCombination(graphs, weights) << endl;
+            int result = dataStorage.createCombination(graphs, weights);
+            cout << RESULT << result << endl;
         }},
 
         {"getNormalizedSupport", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.getG(args[0])->getNormalizedSupport(args[1]) << endl;
+            float result = dataStorage.getG(args[0])->getNormalizedSupport(args[1]);
+            cout << RESULT << result << endl;
         }},
         {"getNormalizedCoupling", "graphId a b", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.getG(args[0])->getNormalizedCoupling(args[1], args[2]) << endl;
+            float result = dataStorage.getG(args[0])->getNormalizedCoupling(args[1], args[2]);
+            cout << RESULT << result << endl;
         }},
         {"getGraphNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             auto nodes = dataStorage.getG(args[0])->getNodeSet();
@@ -75,10 +84,12 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
         }},
 
         {"saveNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.addNodeSet(make_shared<vector<string>>(dataStorage.getG(args[0])->getNodeSet())) << endl;
+            int result = dataStorage.addNodeSet(make_shared<vector<string>>(dataStorage.getG(args[0])->getNodeSet()));
+            cout << RESULT << result << endl;
         }},
         {"createNodeSet", "nodes...", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << RESULT << dataStorage.addNodeSet(make_shared<vector<string>>(args)) << endl;
+            int result = dataStorage.addNodeSet(make_shared<vector<string>>(args));
+            cout << RESULT << result << endl;
         }},
         {"getNodeSet", "nodeSetId", [](DataStorage& dataStorage, const vector<string>& args) {
             const auto& nodes = *dataStorage.getNodeSet(args[0]);
