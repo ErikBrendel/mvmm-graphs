@@ -2,6 +2,7 @@
 #include "../../util.h"
 
 #include <algorithm>
+#include <iostream>
 
 using namespace std;
 
@@ -35,6 +36,7 @@ pair<float, float> NormalizeSupport::getAbsoluteSupportMedianAndMax() {
         }
         medianMaximumCache.first = accumulate(all(supports), 0.0f) / (float) nodes.size();
         medianMaximumCache.second = *max_element(all(supports));
+        std::cout << "Mean: " << medianMaximumCache.first << ", max: " << medianMaximumCache.second << endl;
     }
     return medianMaximumCache;
 }

@@ -16,6 +16,15 @@
 #define ensure(condition, message) if (!(condition)) throw runtime_error(message);
 
 
+template<typename s, typename v>
+s& operator<<(s& str, std::vector<v> vec) {
+    rep(i, vec.size()) {
+        if (i != 0) str << ", ";
+        str << vec[i];
+    }
+    return str;
+}
+
 //#define randRange(upperBound) (rand() % (upperBound))
 //#define randRange(upperBound) std::uniform_int_distribution<int>(0, upperBound)(my_randomEngine)
 
