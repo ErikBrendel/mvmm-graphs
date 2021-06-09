@@ -14,15 +14,6 @@ void SimilarityCouplingGraph::addNode(const string& node, const vector<float>& c
     nodes.push_back(node);
     this->coords[node] = coords;
     this->support[node] = support;
-
-    // normalize coords so that they sum to one - needed for jensen shannon distance
-    float coordSum = 0;
-    rep(i, coords.size()) {
-        coordSum += this->coords[node][i];
-    }
-    rep(i, coords.size()) {
-        this->coords[node][i] /= coordSum;
-    }
 }
 
 float SimilarityCouplingGraph::getSupport(const string& node) {
@@ -42,16 +33,31 @@ float rel_entr(float x, float y) {
     }
 }
 
+void normalize(vector<float>& data) {
+    float sum = 0;
+    rep(i, data.size()) {
+        sum += data[i];
+    }
+    rep(i, data.size()) {
+        data[i] /= sum;
+    }
+}
+
 float jensenShannonArraySimilarity(const vector<float>& a, const vector<float>& b) {
     // from https://github.com/scipy/scipy/blob/master/scipy/spatial/distance.py#L1288
-    vector<float> m(a.size());
-    rep(i, a.size()) {
-        m[i] = (a[i] + b[i]) / 2.0f;
+    vector<float> aNorm(a);
+    vector<float> bNorm(b);
+    normalize(aNorm);
+    normalize(bNorm);
+
+    vector<float> m(aNorm.size());
+    rep(i, aNorm.size()) {
+        m[i] = (aNorm[i] + bNorm[i]) / 2.0f;
     }
     float js = 0;
-    rep(i, a.size()) {
-        js += rel_entr(a[i], m[i]);
-        js += rel_entr(b[i], m[i]);
+    rep(i, aNorm.size()) {
+        js += rel_entr(aNorm[i], m[i]);
+        js += rel_entr(bNorm[i], m[i]);
     }
     static const float divisor = (float)log(2) * 2;
     return sqrt(js / divisor);
