@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 using namespace std;
 
@@ -24,7 +25,7 @@ public:
 
     void plaintextSave(const string& repoName);
 
-    virtual string plaintextContent() = 0;
+    virtual void plaintextContent(ostream& out) = 0;
     virtual void printStatistics() = 0;
 
     float howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet, const vector<string>& allNodes);

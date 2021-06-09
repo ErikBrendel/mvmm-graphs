@@ -175,12 +175,30 @@ unordered_map<uint, vector<uint>> ExplicitCouplingGraph::getChildrenDict() {
     return result;
 }
 
-string ExplicitCouplingGraph::plaintextContent() {
-    return "ECG! WIP";
+void ExplicitCouplingGraph::plaintextContent(ostream& out) {
+    // first line: all node strings
+    // second line: all edges, by node index
+    rep(i, adj.size()) {
+        if (i != 0) out << ";";
+        out << i2node[i];
+    }
+    out << endl;
+    bool first = true;
+    rep(n1, adj.size()) {
+        for (const auto& [n2, weight]: adj[n1]) {
+            if (first) {
+                first = false;
+            } else {
+                out << ";";
+            }
+            out << n1 << "," << n2 << "," << weight;
+        }
+    }
+    out << endl;
 }
 
 void ExplicitCouplingGraph::printStatistics() {
-    cout << plaintextContent() << endl;
+    plaintextContent(cout);
 }
 
 vector<string> ExplicitCouplingGraph::getChildren(const string& node) {

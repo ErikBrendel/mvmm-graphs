@@ -35,7 +35,7 @@ public:
     void dilate(int iterations = 1, float weightFactor = 0.2f);
 
 
-    string plaintextContent() override;
+    void plaintextContent(ostream& out) override;
     void printStatistics() override;
 
     vector<string> getChildren(const string &node) override;

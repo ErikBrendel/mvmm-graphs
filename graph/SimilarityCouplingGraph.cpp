@@ -1,6 +1,8 @@
-#include <iostream>
 #include "SimilarityCouplingGraph.h"
 #include "../util.h"
+#include <iostream>
+
+using namespace std;
 
 SimilarityCouplingGraph::SimilarityCouplingGraph(const string& name) : CouplingGraph(name) {}
 
@@ -64,12 +66,20 @@ float SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const stri
     return jensenShannonArraySimilarity(coordsA->second, coordsB->second);
 }
 
-string SimilarityCouplingGraph::plaintextContent() {
-    return "SCG TODO LOL";
+void SimilarityCouplingGraph::plaintextContent(ostream& out) {
+    // one line per node: name, support, weights...
+    rep(i, nodes.size()) {
+        if (i != 0) out << "\n";
+        out << nodes[i] << "," << support[nodes[i]];
+        for (const auto& c: coords[nodes[i]]) {
+            out << "," << c;
+        }
+    }
+    out << endl;
 }
 
 void SimilarityCouplingGraph::printStatistics() {
-    cout << plaintextContent() << endl;
+    plaintextContent(cout);
 }
 
 float SimilarityCouplingGraph::getNormalizedSupport(const string& node) {

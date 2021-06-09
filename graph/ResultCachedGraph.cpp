@@ -30,7 +30,7 @@ float ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b)
     }
 }
 
-string ResultCachedGraph::plaintextContent() {
+void ResultCachedGraph::plaintextContent(ostream& out) {
     throw runtime_error("Cannot save graph wrapper!");
 }
 

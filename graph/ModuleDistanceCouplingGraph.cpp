@@ -31,8 +31,8 @@ float ModuleDistanceCouplingGraph::getNormalizedCoupling(const string& a, const 
     return (float) pow(base, -dist);
 }
 
-string ModuleDistanceCouplingGraph::plaintextContent() {
-    return "";
+void ModuleDistanceCouplingGraph::plaintextContent(ostream& out) {
+    throw runtime_error("Should not save a ModuleDistanceCouplingGraph!");
 }
 
 void ModuleDistanceCouplingGraph::printStatistics() {
