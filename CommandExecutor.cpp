@@ -22,6 +22,7 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
         {"plaintextSave", "graphId repoName", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.getG(args[0])->plaintextSave(args[1]);
         }},
+
         {"createExplicit", "name", [](DataStorage& dataStorage, const vector<string>& args) {
             cout << dataStorage.createExplicit(args[0]) << endl;
         }},
@@ -56,6 +57,7 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
             }
             cout << dataStorage.createCombination(graphs, weights) << endl;
         }},
+
         {"getNormalizedSupport", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
             cout << dataStorage.getG(args[0])->getNormalizedSupport(args[1]) << endl;
         }},
@@ -73,6 +75,7 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
         {"printStatistics", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.getG(args[0])->printStatistics();
         }},
+
         {"saveNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             cout << dataStorage.addNodeSet(make_shared<vector<string>>(dataStorage.getG(args[0])->getNodeSet())) << endl;
         }},
@@ -82,6 +85,7 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
         {"getNodeSet", "nodeSetId", [](DataStorage& dataStorage, const vector<string>& args) {
             cout << dataStorage.getNodeSet(args[0]) << endl;
         }},
+
         {"howWellPredictsMissingNode", "graphId nodeSetId nodeMissingFromSet nodeSet...", [](DataStorage& dataStorage, const vector<string>& args) {
             auto& g = dataStorage.getG(args[0]);
             auto& ns = dataStorage.getNodeSet(args[1]);
@@ -89,6 +93,7 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
             float result = g->howWellPredictsMissingNode(*ns, args[2], nodeSet);
             cout << result << endl;
         }},
+
         {"explicitAdd", "graphId a b delta", [](DataStorage& dataStorage, const vector<string>& args) {
             const auto& graph = dataStorage.getG(args[0]);
             const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
