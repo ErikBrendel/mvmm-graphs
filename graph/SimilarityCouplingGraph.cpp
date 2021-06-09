@@ -63,13 +63,16 @@ double jensenShannonArraySimilarity(const vector<double>& a, const vector<double
     return sqrt(js / divisor);
 }
 
+float DOCUMENT_SIMILARITY_EXP = 8;  // higher = lower equality values, lower = equality values are all closer to 1
+
 double SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     auto coordsA = coords.find(a);
     if (coordsA == coords.end()) return 0;
     auto coordsB = coords.find(b);
     if (coordsB == coords.end()) return 0;
 
-    return jensenShannonArraySimilarity(coordsA->second, coordsB->second);
+    double distance = jensenShannonArraySimilarity(coordsA->second, coordsB->second);
+    return pow(1 - distance, DOCUMENT_SIMILARITY_EXP);
 }
 
 void SimilarityCouplingGraph::plaintextSave(ostream& out) {
