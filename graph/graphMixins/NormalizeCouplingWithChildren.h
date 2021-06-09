@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <unordered_set>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ private:
 public:
 
     virtual const vector<string>& getNodeSet() = 0;
-    virtual const vector<string>& getChildren(const string& node) = 0;
+    virtual const unordered_set <string>& getChildren(const string& node) = 0;
     virtual vector<string> getDirectlyCoupled(const string& node) = 0;
     virtual float getDirectCoupling(const string& a, const string& b) = 0;
 

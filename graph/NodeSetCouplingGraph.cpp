@@ -21,21 +21,17 @@ void NodeSetCouplingGraph::createChildCache() {
         children[n];
         while (!current.empty()) {
             string p = getParent(current);
-            children[p].push_back(current);
+            if (!children[p].insert(current).second) break;
             current = p;
         }
     }
 }
 
-vector<string> noChildren;
+unordered_set<string> noChildren;
 
-const vector<string>& NodeSetCouplingGraph::getChildren(const string& node) {
+const unordered_set<string>& NodeSetCouplingGraph::getChildren(const string& node) {
     auto found = children.find(node);
     if (found == children.end()) {
-        auto allNodes = getNodeSet();
-        if (find(all(allNodes), node) == allNodes.end()) {
-            return noChildren; // recalculating wont help!
-        }
         createChildCache();
         found = children.find(node);
         if (found == children.end()) {

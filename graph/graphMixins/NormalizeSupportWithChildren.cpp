@@ -11,6 +11,5 @@ float NormalizeSupportWithChildren::getAbsoluteSupport(const string& node) {
         result += getAbsoluteSupport(child);
     }
     absoluteSupportPerNodeCache[node] = result;
-    std::cout << "getAbsoluteSupport " << node << ": " << result << endl;
     return result;
 }
