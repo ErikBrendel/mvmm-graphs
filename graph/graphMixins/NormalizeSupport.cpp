@@ -13,10 +13,14 @@ float NormalizeSupport::getNormalizedSupport(const string& node) {
     float absSupp = getAbsoluteSupport(node);
     auto [median, maximum] = getAbsoluteSupportMedianAndMax();
     float result;
-    if (absSupp <= median) {
-        result = 0.5f * absSupp / median;
+    if (absSupp == 0) {
+        result = 0;
     } else {
-        result = 0.5f + (0.5f * (absSupp - median) / (maximum - median));
+        if (absSupp <= median) {
+            result = 0.5f * absSupp / median;
+        } else {
+            result = 0.5f + (0.5f * (absSupp - median) / (maximum - median));
+        }
     }
     normalizedSupportPerNodeCache[node] = result;
     return result;
