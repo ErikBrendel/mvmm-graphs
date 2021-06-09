@@ -10,7 +10,6 @@ public:
 
     float getNormalizedSupport(const string &node) override;
     float getNormalizedCoupling(const string &a, const string &b) override;
-    void plaintextContent(ostream& out) override;
     void printStatistics() override;
 };
 

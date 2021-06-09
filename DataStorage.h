@@ -20,8 +20,8 @@ private:
     vector<shared_ptr<vector<string>>> nodeSetArray;
 
 public:
-    int load(const string& repoName, const string& name);
-    void save(int g, const string& repoName);
+    int load(const string& repoName, const string& name, const string& storageDir);
+    void save(int g, const string& repoName, const string& storageDir);
     [[nodiscard]] const shared_ptr<CouplingGraph>& getG(int g) const;
     [[nodiscard]] const shared_ptr<CouplingGraph>& getG(const string& gString) const;
 

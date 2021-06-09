@@ -1,11 +1,11 @@
 #include "DataStorage.h"
 
-int DataStorage::load(const string& repoName, const string& name) {
-    return insertG(CouplingGraph::load(repoName, name));
+int DataStorage::load(const string& repoName, const string& name, const string& storageDir) {
+    return insertG(CouplingGraph::load(repoName, name, storageDir));
 }
 
-void DataStorage::save(int g, const string& repoName) {
-    getG(g)->save(repoName);
+void DataStorage::save(int g, const string& repoName, const string& storageDir) {
+    getG(g)->save(repoName, storageDir);
 }
 
 const shared_ptr<CouplingGraph>& DataStorage::getG(int g) const {

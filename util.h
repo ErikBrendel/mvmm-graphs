@@ -13,6 +13,7 @@
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (unsigned int i = 0; i < (n); ++i)
 #define rep_all_pairs(i, j, n) for (unsigned int i = 0; i < (n) - 1; i++) for(unsigned int j = i + 1; j < (n); j++)
+#define ensure(condition, message) if (!(condition)) throw runtime_error(message);
 
 
 //#define randRange(upperBound) (rand() % (upperBound))

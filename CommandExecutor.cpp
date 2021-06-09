@@ -5,22 +5,17 @@
 using namespace std;
 
 
-#define ensure(condition, message) if (!(condition)) throw runtime_error(message);
-
 void printHelpFn();
 
 static const vector<tuple<string, string, function<void(DataStorage& dataStorage, const vector<string>& args)>>> handlers = {
         {"help", "", [](DataStorage& dataStorage, const vector<string>& args) {
             printHelpFn();
         }},
-        {"load", "repoName name", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << dataStorage.load(args[0], args[1]) << endl;
+        {"load", "repoName name storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
+            cout << dataStorage.load(args[0], args[1], args[2]) << endl;
         }},
-        {"save", "graphId repoName", [](DataStorage& dataStorage, const vector<string>& args) {
-            dataStorage.save(stoi(args[0]), args[1]);
-        }},
-        {"plaintextSave", "graphId repoName", [](DataStorage& dataStorage, const vector<string>& args) {
-            dataStorage.getG(args[0])->plaintextSave(args[1]);
+        {"save", "graphId repoName storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
+            dataStorage.save(stoi(args[0]), args[1], args[2]);
         }},
 
         {"createExplicit", "name", [](DataStorage& dataStorage, const vector<string>& args) {

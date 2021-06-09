@@ -54,10 +54,6 @@ float WeightCombinedGraph::getNormalizedCoupling(const string& a, const string& 
     return result;
 }
 
-void WeightCombinedGraph::plaintextContent(ostream& outconst) {
-    throw runtime_error("Cannot serialize combined graph!");
-}
-
 void WeightCombinedGraph::printStatistics() {
     cout << "Combined graph statistics WIP" << endl;
 }

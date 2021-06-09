@@ -175,9 +175,11 @@ unordered_map<uint, vector<uint>> ExplicitCouplingGraph::getChildrenDict() {
     return result;
 }
 
-void ExplicitCouplingGraph::plaintextContent(ostream& out) {
+void ExplicitCouplingGraph::plaintextSave(ostream& out) {
+    out << "Explicit" << endl;
     // first line: all node strings
-    // second line: all edges, by node index
+    // second line: support values for each node
+    // third line: all edges, by node index
     rep(i, adj.size()) {
         if (i != 0) out << ";";
         out << i2node[i];
@@ -186,6 +188,7 @@ void ExplicitCouplingGraph::plaintextContent(ostream& out) {
     bool first = true;
     rep(n1, adj.size()) {
         for (const auto& [n2, weight]: adj[n1]) {
+            if (n2 < n1) continue;
             if (first) {
                 first = false;
             } else {
@@ -197,8 +200,39 @@ void ExplicitCouplingGraph::plaintextContent(ostream& out) {
     out << endl;
 }
 
+void ExplicitCouplingGraph::plaintextLoad(istream& in) {
+    string line;
+    getline(in, line);
+    i2node.clear();
+    split(line, ';', i2node);
+    auto n = i2node.size();
+
+    rep(i, n) {
+        node2i[i2node[i]] = i;
+    }
+
+    supports.resize(n);
+    getline(in, line);
+    auto supportStrings = split(line, ';');
+    rep(i, n) {
+        supports[i] = stof(supportStrings[i]);
+    }
+
+    adj.resize(n);
+    getline(in, line);
+    for (const auto& connectionString: split(line, ';')) {
+        auto parts = split(connectionString, ',');
+        ensure(parts.size() == 3, "connection needs to consist of 3 parts: a, b, weight!");
+        int n1 = stoi(parts[0]);
+        int n2 = stoi(parts[1]);
+        float w = stof(parts[2]);
+        adj[n1].emplace_back(n2, w);
+        adj[n2].emplace_back(n1, w);
+    }
+}
+
 void ExplicitCouplingGraph::printStatistics() {
-    plaintextContent(cout);
+    plaintextSave(cout);
 }
 
 vector<string> ExplicitCouplingGraph::getChildren(const string& node) {

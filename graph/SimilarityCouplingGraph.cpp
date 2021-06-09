@@ -66,7 +66,8 @@ float SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const stri
     return jensenShannonArraySimilarity(coordsA->second, coordsB->second);
 }
 
-void SimilarityCouplingGraph::plaintextContent(ostream& out) {
+void SimilarityCouplingGraph::plaintextSave(ostream& out) {
+    out << "Similarity" << endl;
     // one line per node: name, support, weights...
     rep(i, nodes.size()) {
         if (i != 0) out << "\n";
@@ -78,8 +79,23 @@ void SimilarityCouplingGraph::plaintextContent(ostream& out) {
     out << endl;
 }
 
+void SimilarityCouplingGraph::plaintextLoad(istream& in) {
+    string line;
+    while (getline(in, line)) {
+        auto parts = split(line, ',');
+        ensure(parts.size() >= 3, "Too few parts for a similarity node line!");
+        string node = parts[0];
+        float nodeSupport = stof(parts[1]);
+        vector<float> nodeCoords;
+        for (int i = 2; i < parts.size(); ++i) {
+            nodeCoords.push_back(stof(parts[i]));
+        }
+        addNode(node, nodeCoords, nodeSupport);
+    }
+}
+
 void SimilarityCouplingGraph::printStatistics() {
-    plaintextContent(cout);
+    plaintextSave(cout);
 }
 
 float SimilarityCouplingGraph::getNormalizedSupport(const string& node) {

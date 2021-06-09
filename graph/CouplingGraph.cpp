@@ -1,7 +1,12 @@
 #include "CouplingGraph.h"
 
 #include <utility>
+#include <iostream>
+#include <fstream>
+#include <experimental/filesystem>
 
+#include "ExplicitCouplingGraph.h"
+#include "SimilarityCouplingGraph.h"
 #include "../util.h"
 
 vector<string> emptyNodeSet;
@@ -25,20 +30,46 @@ string CouplingGraph::getParent(const string& node) {
     return join(parts, "/");
 }
 
-void CouplingGraph::save(const string& repoName) {
-    throw runtime_error("Saving is not yet implemented!");
+string picklePathParentDir(const string& repoName, const string& name, const string& storageDir) {
+    return storageDir + repoName;
 }
 
-shared_ptr<CouplingGraph> CouplingGraph::load(const string& repoName, const string& name) {
-    throw runtime_error("Loading is not yet implemented!");
+string picklePath(const string& repoName, const string& name, const string& storageDir) {
+    return storageDir + repoName + "/" + name + ".graph";
 }
 
-string CouplingGraph::picklePath(const string& repoName, const string& name) {
-    return repoName + "/" + name; // TODO!
+void CouplingGraph::save(const string& repoName, const string& storageDir) {
+    string fullPath = picklePath(repoName, name, storageDir);
+    experimental::filesystem::create_directories(picklePathParentDir(repoName, name, storageDir));
+    ofstream out(picklePath(repoName, name, storageDir), ios::trunc);
+    plaintextSave(out);
+    out.close();
 }
 
-void CouplingGraph::plaintextSave(const string& repoName) {
-    throw runtime_error("Cannot plaintext save yet!");
+shared_ptr<CouplingGraph> CouplingGraph::load(const string& repoName, const string& name, const string& storageDir) {
+    string fullPath = picklePath(repoName, name, storageDir);
+    ifstream input(fullPath);
+    string type;
+    getline(input, type);
+    shared_ptr<CouplingGraph> result;
+    if (type == "Explicit") {
+        result = make_shared<ExplicitCouplingGraph>(name);
+    } else if (type == "Similarity") {
+        result = make_shared<SimilarityCouplingGraph>(name);
+    } else {
+        throw runtime_error("Unknown graph type! " + type);
+    }
+    result->plaintextLoad(input);
+    input.close();
+    return result;
+}
+
+void CouplingGraph::plaintextSave(ostream& out) {
+    throw runtime_error("Cannot save this kind of graph!");
+}
+
+void CouplingGraph::plaintextLoad(istream& in) {
+    throw runtime_error("Cannot load this kind of graph!");
 }
 
 float CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet,
