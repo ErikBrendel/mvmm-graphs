@@ -179,7 +179,7 @@ void CommandExecutor::tryExecuteCommand(const string& command) {
 
 void CommandExecutor::executeCommand(const string& command) {
     if (command.empty()) return;
-    auto parts = split(command, " ");
+    auto parts = split(command, '|');
     if (parts.empty()) return;
     string cmd = parts[0];
     parts.erase(parts.begin());
