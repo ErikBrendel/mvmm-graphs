@@ -21,6 +21,8 @@ void mainLoop() {
 }
 
 int main() {
+    cout.precision(10);
+    cout << fixed;
     mainLoop();
     return 0;
 }
