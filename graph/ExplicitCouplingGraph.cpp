@@ -25,12 +25,12 @@ void ExplicitCouplingGraph::addI(uint a, uint b, float delta) {
     } else {
         existingConnection->second += delta;
     }
-    edgeList = adj[b];
-    existingConnection = find_if(all(edgeList), [=](const pair<uint, float>& e){return e.first == a;});
-    if (existingConnection == edgeList.end()) {
-        edgeList.emplace_back(a, delta);
+    auto& edgeList2 = adj[b];
+    auto existingConnection2 = find_if(all(edgeList2), [=](const pair<uint, float>& e){return e.first == a;});
+    if (existingConnection2 == edgeList2.end()) {
+        edgeList2.emplace_back(a, delta);
     } else {
-        existingConnection->second += delta;
+        existingConnection2->second += delta;
     }
 }
 
