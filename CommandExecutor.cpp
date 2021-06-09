@@ -78,7 +78,12 @@ static const vector<tuple<string, string, function<void(DataStorage& dataStorage
             cout << dataStorage.addNodeSet(make_shared<vector<string>>(args)) << endl;
         }},
         {"getNodeSet", "nodeSetId", [](DataStorage& dataStorage, const vector<string>& args) {
-            cout << dataStorage.getNodeSet(args[0]) << endl;
+            const auto& nodes = *dataStorage.getNodeSet(args[0]);
+            rep(i, nodes.size()) {
+                if (i != 0) cout << " ";
+                cout << nodes[i];
+            }
+            cout << endl;
         }},
 
         {"howWellPredictsMissingNode", "graphId nodeSetId nodeMissingFromSet nodeSet...", [](DataStorage& dataStorage, const vector<string>& args) {
