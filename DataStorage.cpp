@@ -36,7 +36,7 @@ int DataStorage::createCached(int g) {
     return insertG(make_shared<ResultCachedGraph>(getG(g)));
 }
 
-int DataStorage::createCombination(const vector<int>& gs, const vector<float>& weights) {
+int DataStorage::createCombination(const vector<int>& gs, const vector<double>& weights) {
     vector<shared_ptr<CouplingGraph>> graphs(gs.size());
     rep(i, gs.size()) {
         graphs[i] = getG(gs[i]);

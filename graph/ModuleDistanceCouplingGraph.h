@@ -8,8 +8,8 @@ class ModuleDistanceCouplingGraph : public CouplingGraph {
 public:
     ModuleDistanceCouplingGraph();
 
-    float getNormalizedSupport(const string &node) override;
-    float getNormalizedCoupling(const string &a, const string &b) override;
+    double getNormalizedSupport(const string &node) override;
+    double getNormalizedCoupling(const string &a, const string &b) override;
     void printStatistics() override;
 };
 

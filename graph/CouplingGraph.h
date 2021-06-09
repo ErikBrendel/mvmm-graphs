@@ -17,8 +17,8 @@ public:
     [[nodiscard]] const string& getName() const;
 
     virtual const vector<string>& getNodeSet();
-    virtual float getNormalizedSupport(const string& node) = 0;
-    virtual float getNormalizedCoupling(const string& a, const string& b) = 0;
+    virtual double getNormalizedSupport(const string& node) = 0;
+    virtual double getNormalizedCoupling(const string& a, const string& b) = 0;
 
     void save(const string& repoName, const string& storageDir);
     static shared_ptr<CouplingGraph> load(const string& repoName, const string& name, const string& storageDir);
@@ -27,7 +27,7 @@ public:
 
     virtual void printStatistics() = 0;
 
-    float howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet, const vector<string>& allNodes);
+    double howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet, const vector<string>& allNodes);
 
 public:
     static string getParent(const string& node);

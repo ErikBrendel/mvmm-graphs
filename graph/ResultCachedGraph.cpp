@@ -7,10 +7,10 @@ const vector<string>& ResultCachedGraph::getNodeSet() {
     return wrapped->getNodeSet();
 }
 
-float ResultCachedGraph::getNormalizedSupport(const string& node) {
+double ResultCachedGraph::getNormalizedSupport(const string& node) {
     auto found = supportCache.find(node);
     if (found == supportCache.end()) {
-        float support = wrapped->getNormalizedSupport(node);
+        double support = wrapped->getNormalizedSupport(node);
         found->second = support;
         return support;
     } else {
@@ -18,11 +18,11 @@ float ResultCachedGraph::getNormalizedSupport(const string& node) {
     }
 }
 
-float ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b) {
+double ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b) {
     pair<string, string> key = make_pair(a, b);
     auto found = couplingCache.find(key);
     if (found == couplingCache.end()) {
-        float coupling = wrapped->getNormalizedCoupling(a, b);
+        double coupling = wrapped->getNormalizedCoupling(a, b);
         found->second = coupling;
         return coupling;
     } else {

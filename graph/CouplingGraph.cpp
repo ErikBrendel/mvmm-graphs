@@ -72,14 +72,14 @@ void CouplingGraph::plaintextLoad(istream& in) {
     throw runtime_error("Cannot load this kind of graph!");
 }
 
-float CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet,
+double CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet,
                                                 const vector<string>& allNodes) {
 
     vector<string> couplingSortedNodes(allNodes);
 
     sort(all(couplingSortedNodes), [&](const string& a, const string& b) {
-        float couplingSumA = 0;
-        float couplingSumB = 0;
+        double couplingSumA = 0;
+        double couplingSumB = 0;
         for (const auto& setNode: nodeSet) {
             couplingSumA += getNormalizedCoupling(setNode, a);
             couplingSumB += getNormalizedCoupling(setNode, b);
@@ -90,6 +90,6 @@ float CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, c
         }
         return couplingSumA > couplingSumB;
     });
-    auto resultIndex = (float)distance(couplingSortedNodes.begin(), find(all(couplingSortedNodes), nodeMissingFromSet));
-    return 1 - (resultIndex / (float)couplingSortedNodes.size());
+    auto resultIndex = (double)distance(couplingSortedNodes.begin(), find(all(couplingSortedNodes), nodeMissingFromSet));
+    return 1 - (resultIndex / (double)couplingSortedNodes.size());
 }

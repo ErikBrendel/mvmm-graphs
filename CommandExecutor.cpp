@@ -51,7 +51,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             ensure(args.size() % 2 == 0, "Unequal amount of parameters for combination graph!")
             int graphAmount = (int)args.size() / 2;
             vector<int> graphs;
-            vector<float> weights;
+            vector<double> weights;
             rep(i, graphAmount) {
                 graphs.push_back(stoi(args[i]));
             }
@@ -63,11 +63,11 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
         }},
 
         {"getNormalizedSupport", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
-            float result = dataStorage.getG(args[0])->getNormalizedSupport(args[1]);
+            double result = dataStorage.getG(args[0])->getNormalizedSupport(args[1]);
             cout << RESULT << result << endl;
         }},
         {"getNormalizedCoupling", "graphId a b", [](DataStorage& dataStorage, const vector<string>& args) {
-            float result = dataStorage.getG(args[0])->getNormalizedCoupling(args[1], args[2]);
+            double result = dataStorage.getG(args[0])->getNormalizedCoupling(args[1], args[2]);
             cout << RESULT << result << endl;
         }},
         {"getGraphNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
@@ -105,7 +105,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             auto& g = dataStorage.getG(args[0]);
             auto& ns = dataStorage.getNodeSet(args[1]);
             vector<string> nodeSet(args.begin() + 3, args.end());
-            float result = g->howWellPredictsMissingNode(*ns, args[2], nodeSet);
+            double result = g->howWellPredictsMissingNode(*ns, args[2], nodeSet);
             cout << RESULT << result << endl;
         }},
 
@@ -149,7 +149,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             const auto& graph = dataStorage.getG(args[0]);
             const auto& similarityGraph = dynamic_pointer_cast<SimilarityCouplingGraph>(graph);
             ensure(similarityGraph != nullptr, "Can only be used on similarity graphs!")
-            vector<float> coords;
+            vector<double> coords;
             for (int i = 2; i < args.size() - 1; i++) {
                 coords.push_back(stof(args[i]));
             }
@@ -159,7 +159,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             const auto& graph = dataStorage.getG(args[0]);
             const auto& combinedGraph = dynamic_pointer_cast<WeightCombinedGraph>(graph);
             ensure(combinedGraph != nullptr, "Can only be used on weight-combined graphs!")
-            vector<float> weights;
+            vector<double> weights;
             for (int i = 1; i < args.size(); i++) {
                 weights.push_back(stof(args[i]));
             }

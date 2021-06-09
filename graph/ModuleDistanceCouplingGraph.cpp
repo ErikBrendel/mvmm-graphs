@@ -21,14 +21,14 @@ int path_module_distance(const string& a, const string& b) {
 
 ModuleDistanceCouplingGraph::ModuleDistanceCouplingGraph() : CouplingGraph("module_distance") {}
 
-float ModuleDistanceCouplingGraph::getNormalizedSupport(const string& node) {
+double ModuleDistanceCouplingGraph::getNormalizedSupport(const string& node) {
     return 1;
 }
 
-float ModuleDistanceCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
+double ModuleDistanceCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     int dist = path_module_distance(a, b);
-    float base = 1.1f;
-    return (float) pow(base, -dist);
+    double base = 1.1f;
+    return (double) pow(base, -dist);
 }
 
 void ModuleDistanceCouplingGraph::printStatistics() {

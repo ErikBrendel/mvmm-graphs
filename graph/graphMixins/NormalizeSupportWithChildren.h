@@ -5,11 +5,11 @@
 
 class NormalizeSupportWithChildren : public NormalizeSupport {
 private:
-    unordered_map<string, float> absoluteSupportPerNodeCache = {};
+    unordered_map<string, double> absoluteSupportPerNodeCache = {};
 
 public:
     virtual const unordered_set <string>& getChildren(const string& node) = 0;
-    virtual float getAbsoluteSelfSupport(const string& node) = 0;
+    virtual double getAbsoluteSelfSupport(const string& node) = 0;
 
-    float getAbsoluteSupport(const string& node) override;
+    double getAbsoluteSupport(const string& node) override;
 };

@@ -14,17 +14,17 @@ vector<string> getGraphNodeSetCombination(const vector<shared_ptr<CouplingGraph>
 class WeightCombinedGraph : public CouplingGraph {
 private:
     vector<shared_ptr<CouplingGraph>> graphs;
-    vector<float> weights;
+    vector<double> weights;
     vector<string> combinedNodeSet;
 
 public:
-    explicit WeightCombinedGraph(const vector<shared_ptr<CouplingGraph>>& graphs, const vector<float>& weights = {});
+    explicit WeightCombinedGraph(const vector<shared_ptr<CouplingGraph>>& graphs, const vector<double>& weights = {});
 
-    void setWeights(const vector<float>& newWeights);
+    void setWeights(const vector<double>& newWeights);
 
     const vector<string> & getNodeSet() override;
-    float getNormalizedSupport(const string &node) override;
-    float getNormalizedCoupling(const string &a, const string &b) override;
+    double getNormalizedSupport(const string &node) override;
+    double getNormalizedCoupling(const string &a, const string &b) override;
     void printStatistics() override;
 };
 

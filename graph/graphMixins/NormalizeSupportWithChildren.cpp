@@ -1,12 +1,12 @@
 #include <iostream>
 #include "NormalizeSupportWithChildren.h"
 
-float NormalizeSupportWithChildren::getAbsoluteSupport(const string& node) {
+double NormalizeSupportWithChildren::getAbsoluteSupport(const string& node) {
     auto cacheEntry = absoluteSupportPerNodeCache.find(node);
     if (cacheEntry != absoluteSupportPerNodeCache.end()) {
         return cacheEntry->second;
     }
-    float result = getAbsoluteSelfSupport(node);
+    double result = getAbsoluteSelfSupport(node);
     for (const auto& child: getChildren(node)) {
         result += getAbsoluteSupport(child);
     }

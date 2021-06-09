@@ -10,15 +10,15 @@ using namespace std;
 
 class NormalizeSupport {
 private:
-    unordered_map<string, float> normalizedSupportPerNodeCache = {};
-    pair<float, float> medianMaximumCache = {0, 0};
+    unordered_map<string, double> normalizedSupportPerNodeCache = {};
+    pair<double, double> medianMaximumCache = {0, 0};
 
 public:
-    virtual float getAbsoluteSupport(const string& node) = 0;
+    virtual double getAbsoluteSupport(const string& node) = 0;
     virtual const vector<string>& getNodeSet() = 0;
 
-    virtual float getNormalizedSupport(const string& node);
+    virtual double getNormalizedSupport(const string& node);
 
 private:
-    pair<float, float> getAbsoluteSupportMedianAndMax();
+    pair<double, double> getAbsoluteSupportMedianAndMax();
 };

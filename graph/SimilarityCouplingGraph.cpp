@@ -10,22 +10,22 @@ const vector<string>& SimilarityCouplingGraph::getNodeSet() {
     return nodes;
 }
 
-void SimilarityCouplingGraph::addNode(const string& node, const vector<float>& coords, float support) {
+void SimilarityCouplingGraph::addNode(const string& node, const vector<double>& coords, double support) {
     nodes.push_back(node);
     this->coords[node] = coords;
     this->support[node] = support;
 }
 
-float SimilarityCouplingGraph::getSupport(const string& node) {
+double SimilarityCouplingGraph::getSupport(const string& node) {
     auto found = support.find(node);
     return found == support.end() ? 0 : found->second;
 }
 
-float SimilarityCouplingGraph::getAbsoluteSupport(const string& node) {
+double SimilarityCouplingGraph::getAbsoluteSupport(const string& node) {
     return getSupport(node);
 }
 
-float rel_entr(float x, float y) {
+double rel_entr(double x, double y) {
     if (x > 0 && y != 0) {
         return x * log(x / y);
     } else {
@@ -33,8 +33,8 @@ float rel_entr(float x, float y) {
     }
 }
 
-void normalize(vector<float>& data) {
-    float sum = 0;
+void normalize(vector<double>& data) {
+    double sum = 0;
     rep(i, data.size()) {
         sum += data[i];
     }
@@ -43,27 +43,27 @@ void normalize(vector<float>& data) {
     }
 }
 
-float jensenShannonArraySimilarity(const vector<float>& a, const vector<float>& b) {
+double jensenShannonArraySimilarity(const vector<double>& a, const vector<double>& b) {
     // from https://github.com/scipy/scipy/blob/master/scipy/spatial/distance.py#L1288
-    vector<float> aNorm(a);
-    vector<float> bNorm(b);
+    vector<double> aNorm(a);
+    vector<double> bNorm(b);
     normalize(aNorm);
     normalize(bNorm);
 
-    vector<float> m(aNorm.size());
+    vector<double> m(aNorm.size());
     rep(i, aNorm.size()) {
         m[i] = (aNorm[i] + bNorm[i]) / 2.0f;
     }
-    float js = 0;
+    double js = 0;
     rep(i, aNorm.size()) {
         js += rel_entr(aNorm[i], m[i]);
         js += rel_entr(bNorm[i], m[i]);
     }
-    static const float divisor = (float)log(2) * 2;
+    static const double divisor = (double)log(2) * 2;
     return sqrt(js / divisor);
 }
 
-float SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
+double SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     auto coordsA = coords.find(a);
     if (coordsA == coords.end()) return 0;
     auto coordsB = coords.find(b);
@@ -91,8 +91,8 @@ void SimilarityCouplingGraph::plaintextLoad(istream& in) {
         auto parts = split(line, ',');
         ensure(parts.size() >= 3, "Too few parts for a similarity node line!");
         string node = parts[0];
-        float nodeSupport = stof(parts[1]);
-        vector<float> nodeCoords;
+        double nodeSupport = stof(parts[1]);
+        vector<double> nodeCoords;
         for (int i = 2; i < parts.size(); ++i) {
             nodeCoords.push_back(stof(parts[i]));
         }
@@ -104,6 +104,6 @@ void SimilarityCouplingGraph::printStatistics() {
     plaintextSave(cout);
 }
 
-float SimilarityCouplingGraph::getNormalizedSupport(const string& node) {
+double SimilarityCouplingGraph::getNormalizedSupport(const string& node) {
     return NormalizeSupport::getNormalizedSupport(node);
 }

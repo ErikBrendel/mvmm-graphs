@@ -12,23 +12,23 @@ using namespace std;
 class SimilarityCouplingGraph : public NormalizeSupport, public CouplingGraph {
 private:
     vector<string> nodes;
-    unordered_map<string, vector<float>> coords;
-    unordered_map<string, float> support;
+    unordered_map<string, vector<double>> coords;
+    unordered_map<string, double> support;
 
 public:
     explicit SimilarityCouplingGraph(const string& name);
 
     const vector<string> & getNodeSet() override;
-    void addNode(const string& node, const vector<float>& coords, float support);
-    float getSupport(const string& node);
-    float getAbsoluteSupport(const string &node) override;
-    float getNormalizedCoupling(const string &a, const string &b) override;
+    void addNode(const string& node, const vector<double>& coords, double support);
+    double getSupport(const string& node);
+    double getAbsoluteSupport(const string &node) override;
+    double getNormalizedCoupling(const string &a, const string &b) override;
 
     void plaintextSave(ostream& out) override;
     void plaintextLoad(istream& in) override;
     void printStatistics() override;
 
-    float getNormalizedSupport(const string &node) override;
+    double getNormalizedSupport(const string &node) override;
 };
 
 

@@ -11,22 +11,22 @@ const vector<string>& ExplicitCouplingGraph::getNodeSet() {
     return i2node;
 }
 
-void ExplicitCouplingGraph::add(const string& a, const string& b, float delta) {
+void ExplicitCouplingGraph::add(const string& a, const string& b, double delta) {
     if (a == b) return;
     addI(getNodeIndex(a), getNodeIndex(b), delta);
 }
 
-void ExplicitCouplingGraph::addI(uint a, uint b, float delta) {
+void ExplicitCouplingGraph::addI(uint a, uint b, double delta) {
     if (a == b) return;
     auto& edgeList = adj[a];
-    auto existingConnection = find_if(all(edgeList), [=](const pair<uint, float>& e){return e.first == b;});
+    auto existingConnection = find_if(all(edgeList), [=](const pair<uint, double>& e){return e.first == b;});
     if (existingConnection == edgeList.end()) {
         edgeList.emplace_back(b, delta);
     } else {
         existingConnection->second += delta;
     }
     auto& edgeList2 = adj[b];
-    auto existingConnection2 = find_if(all(edgeList2), [=](const pair<uint, float>& e){return e.first == a;});
+    auto existingConnection2 = find_if(all(edgeList2), [=](const pair<uint, double>& e){return e.first == a;});
     if (existingConnection2 == edgeList2.end()) {
         edgeList2.emplace_back(a, delta);
     } else {
@@ -34,13 +34,13 @@ void ExplicitCouplingGraph::addI(uint a, uint b, float delta) {
     }
 }
 
-float ExplicitCouplingGraph::get(const string& a, const string& b) {
+double ExplicitCouplingGraph::get(const string& a, const string& b) {
     auto ai = node2i.find(a);
     if (ai == node2i.end()) return 0;
     auto bi = node2i.find(b);
     if (bi == node2i.end()) return 0;
     auto& edgeList = adj[ai->second];
-    auto conn = find_if(all(edgeList), [=](const pair<uint, float>& e){return e.first == bi->second;});
+    auto conn = find_if(all(edgeList), [=](const pair<uint, double>& e){return e.first == bi->second;});
     if (conn == edgeList.end()) {
         return 0;
     } else {
@@ -48,7 +48,7 @@ float ExplicitCouplingGraph::get(const string& a, const string& b) {
     }
 }
 
-float ExplicitCouplingGraph::getDirectCoupling(const string& a, const string& b) {
+double ExplicitCouplingGraph::getDirectCoupling(const string& a, const string& b) {
     return get(a, b);
 }
 
@@ -63,36 +63,36 @@ vector<string> ExplicitCouplingGraph::getDirectlyCoupled(const string& node) {
     return result;
 }
 
-void ExplicitCouplingGraph::addSupport(const string& node, float delta) {
+void ExplicitCouplingGraph::addSupport(const string& node, double delta) {
     supports[getNodeIndex(node)] += delta;
 }
 
-float ExplicitCouplingGraph::getSupport(const string& node) {
+double ExplicitCouplingGraph::getSupport(const string& node) {
     auto found = node2i.find(node);
     if (found == node2i.end()) return 0;
     return supports[found->second];
 }
 
-float ExplicitCouplingGraph::getAbsoluteSelfSupport(const string& node) {
+double ExplicitCouplingGraph::getAbsoluteSelfSupport(const string& node) {
     return getSupport(node);
 }
 
-void ExplicitCouplingGraph::addAndSupport(const string& a, const string& b, float delta) {
+void ExplicitCouplingGraph::addAndSupport(const string& a, const string& b, double delta) {
     add(a, b, delta);
     addSupport(a, delta);
     addSupport(b, delta);
 }
 
-void ExplicitCouplingGraph::cutoffEdges(float minimumWeight) {
-    for (vector<pair<uint, float>>& edgeList : adj) {
+void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
+    for (vector<pair<uint, double>>& edgeList : adj) {
         edgeList.erase(
-                remove_if(all(edgeList), [=](const pair<uint, float>& conn) { return conn.second < minimumWeight; }),
+                remove_if(all(edgeList), [=](const pair<uint, double>& conn) { return conn.second < minimumWeight; }),
                 edgeList.end()
         );
     }
 }
 
-void ExplicitCouplingGraph::propagateDown(int layers, float weightFactor) {
+void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
     unordered_map<uint, vector<uint>> childrenDict = getChildrenDict();
     vector<uint> childHavingNodes;
     for (const auto& entry: childrenDict) {
@@ -103,10 +103,10 @@ void ExplicitCouplingGraph::propagateDown(int layers, float weightFactor) {
     }); // TODO is this the right order?
 
     rep(iteration, layers) {
-        vector<tuple<uint, uint, float>> changesToApply;
+        vector<tuple<uint, uint, double>> changesToApply;
         for (const uint& node: childHavingNodes) {
-            vector<pair<uint, float>> connectionsAndWeights;
-            for (const pair<uint, float>& conn: adj[node]) {
+            vector<pair<uint, double>> connectionsAndWeights;
+            for (const pair<uint, double>& conn: adj[node]) {
                 if (!startsWith(i2node[conn.first], i2node[node] + "/")) {
                     connectionsAndWeights.emplace_back(conn.first, conn.second * weightFactor);
                 }
@@ -129,14 +129,14 @@ void ExplicitCouplingGraph::propagateDown(int layers, float weightFactor) {
     }
 }
 
-void ExplicitCouplingGraph::dilate(int iterations, float weightFactor) {
+void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
 
     rep(iteration, iterations) {
-        vector<tuple<uint, uint, float>> changesToApply;
+        vector<tuple<uint, uint, double>> changesToApply;
 
         rep(node, adj.size()) {
-            vector<pair<uint, float>> connectionsAndWeights;
-            for (const pair<uint, float>& conn: adj[node]) {
+            vector<pair<uint, double>> connectionsAndWeights;
+            for (const pair<uint, double>& conn: adj[node]) {
                 if (!startsWith(i2node[conn.first], i2node[node] + "/") && !startsWith(i2node[node], i2node[conn.first] + "/")) {
                     connectionsAndWeights.emplace_back(conn.first, conn.second * weightFactor);
                 }
@@ -240,7 +240,7 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
         ensure(parts.size() == 3, "connection needs to consist of 3 parts: a, b, weight!");
         int n1 = stoi(parts[0]);
         int n2 = stoi(parts[1]);
-        float w = stof(parts[2]);
+        double w = stof(parts[2]);
         adj[n1].emplace_back(n2, w);
         adj[n2].emplace_back(n1, w);
     }
@@ -254,10 +254,10 @@ const unordered_set<string>& ExplicitCouplingGraph::getChildren(const string& no
     return NodeSetCouplingGraph::getChildren(node);
 }
 
-float ExplicitCouplingGraph::getNormalizedSupport(const string& node) {
+double ExplicitCouplingGraph::getNormalizedSupport(const string& node) {
     return NormalizeSupport::getNormalizedSupport(node);
 }
 
-float ExplicitCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
+double ExplicitCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     return NormalizeCouplingWithChildren::getNormalizedCoupling(a, b);
 }

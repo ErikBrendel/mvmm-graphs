@@ -14,16 +14,16 @@ vector<string> getGraphNodeSetCombination(const vector<shared_ptr<CouplingGraph>
 }
 
 WeightCombinedGraph::WeightCombinedGraph(const vector<shared_ptr<CouplingGraph>>& graphs,
-                                         const vector<float>& weights)
+                                         const vector<double>& weights)
                                          : CouplingGraph("Combined Graph"), graphs{graphs}, weights{weights} {
     if (this->weights.empty()) {
-        float defaultWeights = 1.0f / (float)this->graphs.size();
+        double defaultWeights = 1.0 / (double)this->graphs.size();
         this->weights.resize(graphs.size());
         fill(all(this->weights), defaultWeights);
     }
 }
 
-void WeightCombinedGraph::setWeights(const vector<float>& newWeights) {
+void WeightCombinedGraph::setWeights(const vector<double>& newWeights) {
     weights = newWeights;
 }
 
@@ -34,8 +34,8 @@ const vector<string>& WeightCombinedGraph::getNodeSet() {
     return combinedNodeSet;
 }
 
-float WeightCombinedGraph::getNormalizedSupport(const string& node) {
-    float result = 0;
+double WeightCombinedGraph::getNormalizedSupport(const string& node) {
+    double result = 0;
     rep(i, graphs.size()) {
         if (weights[i] != 0) {
             result += weights[i] * graphs[i]->getNormalizedSupport(node);
@@ -44,8 +44,8 @@ float WeightCombinedGraph::getNormalizedSupport(const string& node) {
     return result;
 }
 
-float WeightCombinedGraph::getNormalizedCoupling(const string& a, const string& b) {
-    float result = 0;
+double WeightCombinedGraph::getNormalizedCoupling(const string& a, const string& b) {
+    double result = 0;
     rep(i, graphs.size()) {
         if (weights[i] != 0) {
             result += weights[i] * graphs[i]->getNormalizedCoupling(a, b);

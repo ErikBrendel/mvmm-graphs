@@ -29,7 +29,7 @@ public:
     int createSimilarity(const string& name);
     int createModuleDistance();
     int createCached(int g);
-    int createCombination(const vector<int>& gs, const vector<float>& weights = {});
+    int createCombination(const vector<int>& gs, const vector<double>& weights = {});
 
     [[nodiscard]] const shared_ptr<vector<string>>& getNodeSet(int n) const;
     [[nodiscard]] const shared_ptr<vector<string>>& getNodeSet(const string& nString) const;
