@@ -180,11 +180,19 @@ void ExplicitCouplingGraph::plaintextSave(ostream& out) {
     // first line: all node strings
     // second line: support values for each node
     // third line: all edges, by node index
+
     rep(i, adj.size()) {
         if (i != 0) out << ";";
         out << i2node[i];
     }
     out << endl;
+
+    rep(i, adj.size()) {
+        if (i != 0) out << ";";
+        out << supports[i];
+    }
+    out << endl;
+
     bool first = true;
     rep(n1, adj.size()) {
         for (const auto& [n2, weight]: adj[n1]) {
