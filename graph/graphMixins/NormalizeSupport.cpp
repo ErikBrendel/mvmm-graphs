@@ -11,11 +11,11 @@ float NormalizeSupport::getNormalizedSupport(const string& node) {
         return cacheEntry->second;
     }
     float absSupp = getAbsoluteSupport(node);
-    auto [median, maximum] = getAbsoluteSupportMedianAndMax();
     float result;
     if (absSupp == 0) {
         result = 0;
     } else {
+        auto [median, maximum] = getAbsoluteSupportMedianAndMax();
         if (absSupp <= median) {
             result = 0.5f * absSupp / median;
         } else {
