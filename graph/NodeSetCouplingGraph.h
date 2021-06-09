@@ -12,7 +12,7 @@ public:
 
     const vector<string>& getNodeSet() override = 0;
 
-    virtual vector<string> getChildren(const string& node);
+    virtual const vector<string>& getChildren(const string& node);
 
 private:
     void createChildCache();

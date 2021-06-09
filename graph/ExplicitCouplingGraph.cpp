@@ -243,7 +243,7 @@ void ExplicitCouplingGraph::printStatistics() {
     plaintextSave(cout);
 }
 
-vector<string> ExplicitCouplingGraph::getChildren(const string& node) {
+const vector<string>& ExplicitCouplingGraph::getChildren(const string& node) {
     return NodeSetCouplingGraph::getChildren(node);
 }
 

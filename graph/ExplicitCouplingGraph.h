@@ -39,7 +39,7 @@ public:
     void plaintextLoad(istream& in) override;
     void printStatistics() override;
 
-    vector<string> getChildren(const string &node) override;
+    const vector<string>& getChildren(const string &node) override;
     float getNormalizedSupport(const string& node) override;
     float getNormalizedCoupling(const string& a, const string& b) override;
 

@@ -27,13 +27,19 @@ void NodeSetCouplingGraph::createChildCache() {
     }
 }
 
-vector<string> NodeSetCouplingGraph::getChildren(const string& node) {
+vector<string> noChildren;
+
+const vector<string>& NodeSetCouplingGraph::getChildren(const string& node) {
     auto found = children.find(node);
     if (found == children.end()) {
+        auto allNodes = getNodeSet();
+        if (find(all(allNodes), node) == allNodes.end()) {
+            return noChildren; // recalculating wont help!
+        }
         createChildCache();
         found = children.find(node);
         if (found == children.end()) {
-            return {};
+            return noChildren;
         }
     }
     return found->second;
