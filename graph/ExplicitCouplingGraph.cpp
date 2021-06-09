@@ -63,7 +63,7 @@ void ExplicitCouplingGraph::addSupport(const string& node, float delta) {
 float ExplicitCouplingGraph::getSupport(const string& node) {
     auto found = node2i.find(node);
     if (found == node2i.end()) return 0;
-    supports[found->second];
+    return supports[found->second];
 }
 
 float ExplicitCouplingGraph::getAbsoluteSelfSupport(const string& node) {

@@ -20,13 +20,7 @@ void mainLoop() {
     }
 }
 
-int main(int argc, const char* argv[]) {
+int main() {
     mainLoop();
-    cout << "Hello, World!" << endl;
-
-    ExplicitCouplingGraph g("foo");
-    SimilarityCouplingGraph g2("bar");
-    ModuleDistanceCouplingGraph g3;
-
     return 0;
 }
