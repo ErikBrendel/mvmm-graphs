@@ -42,6 +42,8 @@ void CouplingGraph::save(const string& repoName, const string& storageDir) {
     string fullPath = picklePath(repoName, name, storageDir);
     experimental::filesystem::create_directories(picklePathParentDir(repoName, name, storageDir));
     ofstream out(picklePath(repoName, name, storageDir), ios::trunc);
+    out.precision(10);
+    out << fixed;
     plaintextSave(out);
     out.close();
 }
