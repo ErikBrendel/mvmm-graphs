@@ -12,7 +12,7 @@ using namespace std;
 class ExplicitCouplingGraph : public NormalizeCouplingWithChildren, public NormalizeSupportWithChildren, public NodeSetCouplingGraph {
 private:
     vector<double> supports;
-    vector<vector<pair<uint, double>>> adj;
+    vector<unordered_map<uint, double>> adj;
     unordered_map<string, uint> node2i;
     vector<string> i2node;
 public:
@@ -22,7 +22,7 @@ public:
     void add(const string& a, const string& b, double delta);
     double get(const string& a, const string& b);
     double getDirectCoupling(const string& a, const string& b) override;
-    vector<string> getDirectlyCoupled(const string& node);
+    vector<string> getDirectlyCoupled(const string& node) override;
 
     void addSupport(const string& node, double delta);
     double getSupport(const string& node);

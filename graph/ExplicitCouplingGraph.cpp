@@ -20,16 +20,16 @@ void ExplicitCouplingGraph::add(const string& a, const string& b, double delta) 
 void ExplicitCouplingGraph::addI(uint a, uint b, double delta) {
     if (a == b) return;
     auto& edgeList = adj[a];
-    auto existingConnection = find_if(all(edgeList), [=](const pair<uint, double>& e){return e.first == b;});
+    auto existingConnection = edgeList.find(b);
     if (existingConnection == edgeList.end()) {
-        edgeList.emplace_back(b, delta);
+        edgeList[b] = delta;
     } else {
         existingConnection->second += delta;
     }
     auto& edgeList2 = adj[b];
-    auto existingConnection2 = find_if(all(edgeList2), [=](const pair<uint, double>& e){return e.first == a;});
+    auto existingConnection2 = edgeList2.find(a);
     if (existingConnection2 == edgeList2.end()) {
-        edgeList2.emplace_back(a, delta);
+        edgeList2[a] = delta;
     } else {
         existingConnection2->second += delta;
     }
@@ -41,7 +41,7 @@ double ExplicitCouplingGraph::get(const string& a, const string& b) {
     auto bi = node2i.find(b);
     if (bi == node2i.end()) return 0;
     auto& edgeList = adj[ai->second];
-    auto conn = find_if(all(edgeList), [=](const pair<uint, double>& e){return e.first == bi->second;});
+    auto conn = edgeList.find(bi->second);
     if (conn == edgeList.end()) {
         return 0;
     } else {
@@ -57,9 +57,10 @@ vector<string> ExplicitCouplingGraph::getDirectlyCoupled(const string& node) {
     auto i = node2i.find(node);
     if (i == node2i.end()) return {};
     auto edgeList = adj[i->second];
-    vector<string> result(edgeList.size());
-    rep(n, edgeList.size()) {
-        result[n] = i2node[edgeList[n].first];
+    vector<string> result;
+    result.reserve(edgeList.size());
+    for (const auto& entry: edgeList) {
+        result.push_back(i2node[entry.first]);
     }
     return result;
 }
@@ -85,11 +86,15 @@ void ExplicitCouplingGraph::addAndSupport(const string& a, const string& b, doub
 }
 
 void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
-    for (vector<pair<uint, double>>& edgeList : adj) {
-        edgeList.erase(
-                remove_if(all(edgeList), [=](const pair<uint, double>& conn) { return conn.second < minimumWeight; }),
-                edgeList.end()
-        );
+    for (unordered_map<uint, double>& edgeList : adj) {
+        // https://stackoverflow.com/a/9515446/4354423 remove from map by condition
+        for(auto it = edgeList.begin(), ite = edgeList.end(); it != ite;) {
+            if(it->second < minimumWeight) {
+                it = edgeList.erase(it);
+            } else {
+                ++it;
+            }
+        }
     }
 }
 
@@ -107,9 +112,9 @@ void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
         vector<tuple<uint, uint, double>> changesToApply;
         for (const uint& node: childHavingNodes) {
             vector<pair<uint, double>> connectionsAndWeights;
-            for (const pair<uint, double>& conn: adj[node]) {
-                if (!startsWith(i2node[conn.first], i2node[node] + "/")) {
-                    connectionsAndWeights.emplace_back(conn.first, conn.second * weightFactor);
+            for (const auto& [n2, w]: adj[node]) {
+                if (!startsWith(i2node[n2], i2node[node] + "/")) {
+                    connectionsAndWeights.emplace_back(n2, w * weightFactor);
                 }
             }
 
@@ -135,13 +140,13 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
     rep(iteration, iterations) {
         vector<tuple<uint, uint, double>> changesToApply;
 
-        ProgressDisplay::init("Collecting dilation info", adj.size());
-        rep(node, adj.size()) {
+        ProgressDisplay::init("Collecting dilation info", node2i.size());
+        rep(node, node2i.size()) {
             ProgressDisplay::update();
             vector<pair<uint, double>> connectionsAndWeights;
-            for (const pair<uint, double>& conn: adj[node]) {
-                if (!startsWith(i2node[conn.first], i2node[node] + "/") && !startsWith(i2node[node], i2node[conn.first] + "/")) {
-                    connectionsAndWeights.emplace_back(conn.first, conn.second * weightFactor);
+            for (const auto& [n2, w]: adj[node]) {
+                if (!startsWith(i2node[n2], i2node[node] + "/") && !startsWith(i2node[node], i2node[n2] + "/")) {
+                    connectionsAndWeights.emplace_back(n2, w * weightFactor);
                 }
             }
             if (connectionsAndWeights.empty()) continue;
@@ -167,7 +172,7 @@ uint ExplicitCouplingGraph::getNodeIndex(const string& node) {
     if (found != node2i.end()) {
         return found->second;
     }
-    uint result = adj.size();
+    uint result = node2i.size();
     supports.push_back(0);
     adj.emplace_back();
     i2node.push_back(node);
@@ -177,7 +182,7 @@ uint ExplicitCouplingGraph::getNodeIndex(const string& node) {
 
 unordered_map<uint, vector<uint>> ExplicitCouplingGraph::getChildrenDict() {
     unordered_map<uint, vector<uint>> result;
-    rep(node, adj.size()) {
+    rep(node, node2i.size()) {
         string& nodeStr = i2node[node];
         if (nodeStr.find('/') != std::string::npos) {
             string parentStr = getParent(nodeStr);
@@ -196,20 +201,20 @@ void ExplicitCouplingGraph::plaintextSave(ostream& out) {
     // second line: support values for each node
     // third line: all edges, by node index
 
-    rep(i, adj.size()) {
+    rep(i, node2i.size()) {
         if (i != 0) out << ";";
         out << i2node[i];
     }
     out << endl;
 
-    rep(i, adj.size()) {
+    rep(i, node2i.size()) {
         if (i != 0) out << ";";
         out << supports[i];
     }
     out << endl;
 
     bool first = true;
-    rep(n1, adj.size()) {
+    rep(n1, node2i.size()) {
         for (const auto& [n2, weight]: adj[n1]) {
             if (n2 < n1) continue;
             if (first) {
@@ -249,8 +254,8 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
         int n1 = stoi(parts[0]);
         int n2 = stoi(parts[1]);
         double w = stof(parts[2]);
-        adj[n1].emplace_back(n2, w);
-        adj[n2].emplace_back(n1, w);
+        adj[n1][n2] = w;
+        adj[n2][n1] = w;
     }
 }
 
