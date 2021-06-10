@@ -1,4 +1,5 @@
 #include "ExplicitCouplingGraph.h"
+#include "../ProgressDisplay.h"
 #include "../util.h"
 
 #include <iostream>
@@ -134,7 +135,9 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
     rep(iteration, iterations) {
         vector<tuple<uint, uint, double>> changesToApply;
 
+        ProgressDisplay::init("Collecting dilation info", adj.size());
         rep(node, adj.size()) {
+            ProgressDisplay::update();
             vector<pair<uint, double>> connectionsAndWeights;
             for (const pair<uint, double>& conn: adj[node]) {
                 if (!startsWith(i2node[conn.first], i2node[node] + "/") && !startsWith(i2node[node], i2node[conn.first] + "/")) {
@@ -148,10 +151,14 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
                 changesToApply.emplace_back(c1, c2, min(w1, w2));
             }
         }
+        ProgressDisplay::close();
 
+        ProgressDisplay::init("Applying changes", changesToApply.size());
         for (const auto& [a, b, delta]: changesToApply) {
+            ProgressDisplay::update();
             addI(a, b, delta);
         }
+        ProgressDisplay::close();
     }
 }
 

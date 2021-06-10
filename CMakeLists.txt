@@ -22,6 +22,7 @@ add_executable(coupling_graphs
         graph/ResultCachedGraph.cpp
         DataStorage.cpp
         CommandExecutor.cpp
+        ProgressDisplay.cpp
         )
 
 
