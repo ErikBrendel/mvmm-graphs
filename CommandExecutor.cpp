@@ -62,6 +62,10 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             cout << RESULT << result << endl;
         }},
 
+        {"getGraphName", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& result = dataStorage.getG(args[0])->getName();
+            cout << RESULT << result << endl;
+        }},
         {"getNormalizedSupport", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
             double result = dataStorage.getG(args[0])->getNormalizedSupport(args[1]);
             cout << RESULT << result << endl;
