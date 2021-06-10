@@ -141,6 +141,7 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
                     connectionsAndWeights.emplace_back(conn.first, conn.second * weightFactor);
                 }
             }
+            if (connectionsAndWeights.empty()) continue;
             rep_all_pairs(i, j, connectionsAndWeights.size()) {
                 const auto& [c1, w1] = connectionsAndWeights[i];
                 const auto& [c2, w2] = connectionsAndWeights[j];
