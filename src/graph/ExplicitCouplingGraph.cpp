@@ -186,7 +186,8 @@ void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
 void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
 
     rep(iteration, iterations) {
-        vector<tuple<uint, uint, double>> changesToApply;
+        vector<unordered_map<uint, double>> changesToApply;
+        changesToApply.resize(adj.size());
 
         ProgressDisplay::init("Collecting dilation info", node2i.size());
         rep(node, node2i.size()) {
@@ -201,15 +202,26 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
             rep_all_pairs(i, j, connectionsAndWeights.size()) {
                 const auto& [c1, w1] = connectionsAndWeights[i];
                 const auto& [c2, w2] = connectionsAndWeights[j];
-                changesToApply.emplace_back(c1, c2, min(w1, w2));
+                double w = min(w1, w2);
+                uint a = c1;
+                uint b = c2;
+                if (a > b) swap(a, b);
+                auto existing = changesToApply[a].find(b);
+                if (existing != changesToApply[a].end()) {
+                    existing->second += w;
+                } else {
+                    changesToApply[a][b] = w;
+                }
             }
         }
         ProgressDisplay::close();
 
-        ProgressDisplay::init("Applying changes", changesToApply.size());
-        for (const auto& [a, b, delta]: changesToApply) {
+        ProgressDisplay::init("Applying changes", adj.size());
+        rep(n1, adj.size()) {
             ProgressDisplay::update();
-            addI(a, b, delta);
+            for (const auto& [n2, w]: changesToApply[n1]) {
+                addI(n1, n2, w);
+            }
         }
         ProgressDisplay::close();
     }
