@@ -91,15 +91,31 @@ void ExplicitCouplingGraph::removeNode(const string& node) {
         return;
     }
     auto nodeIndex = found->second;
-    auto lastNodeIndex = adj.size() - 1;
     node2i.erase(found);
 
+    // remove all connections from / to the node that shall be removed
+    for (const auto& [n2, w]: adj[nodeIndex]) {
+        adj[n2].erase(nodeIndex);
+    }
+    adj[nodeIndex].clear();
+
+    // the last node will be swapped in to fill the gap
+    auto lastNodeIndex = adj.size() - 1;
+
+    //redirect all pointers to the last node to its new location
+    for (const auto& [n2, w]: adj[lastNodeIndex]) {
+        adj[n2].erase(lastNodeIndex);
+        adj[n2][nodeIndex] = w;
+    }
+
+    // do the node swap within all containers
     supports[nodeIndex] = supports[lastNodeIndex];
     supports.pop_back();
     adj[nodeIndex] = adj[lastNodeIndex];
     adj.pop_back();
     i2node[nodeIndex] = i2node[lastNodeIndex];
     i2node.pop_back();
+    node2i[i2node[nodeIndex]] = nodeIndex;
 }
 
 void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
@@ -293,7 +309,7 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
 
 void ExplicitCouplingGraph::printStatistics() {
     auto nodeCount = adj.size();
-    auto edgeCount = accumulate(all(adj), 0, [](int acc, const unordered_map<uint, double>& edgeList){return acc + edgeList.size();});
+    auto edgeCount = accumulate(all(adj), 0, [](int acc, const unordered_map<uint, double>& edgeList){return acc + edgeList.size();}) / 2;
     auto cc = connectedComponents();
     sort(all(cc), [](const unordered_set<uint>& a, const unordered_set<uint>& b){return a.size() < b.size();});
     vector<int> ccSizes(cc.size());
@@ -308,9 +324,9 @@ void ExplicitCouplingGraph::printStatistics() {
     cout << endl;
     vector<double> edgeWeights;
     edgeWeights.reserve(edgeCount);
-    for (const auto& edgeList: adj) {
-        for (const auto& [n, w]: edgeList) {
-            edgeWeights.push_back(w);
+    rep(n1, adj.size()) {
+        for (const auto& [n2, w]: adj[n1]) {
+            if (n2 > n1) edgeWeights.push_back(w);
         }
     }
     sort(all(edgeWeights));
