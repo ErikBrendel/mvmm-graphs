@@ -9,20 +9,21 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_executable(coupling_graphs
-        main.cpp util.cpp
-        graph/CouplingGraph.cpp
-        graph/graphMixins/NormalizeSupport.cpp
-        graph/NodeSetCouplingGraph.cpp
-        graph/graphMixins/NormalizeSupportWithChildren.cpp
-        graph/graphMixins/NormalizeCouplingWithChildren.cpp
-        graph/ExplicitCouplingGraph.cpp
-        graph/SimilarityCouplingGraph.cpp
-        graph/ModuleDistanceCouplingGraph.cpp
-        graph/WeightCombinedGraph.cpp
-        graph/ResultCachedGraph.cpp
-        DataStorage.cpp
-        CommandExecutor.cpp
-        ProgressDisplay.cpp
+        src/main.cpp
+        src/util.cpp
+        src/graph/CouplingGraph.cpp
+        src/graph/graphMixins/NormalizeSupport.cpp
+        src/graph/NodeSetCouplingGraph.cpp
+        src/graph/graphMixins/NormalizeSupportWithChildren.cpp
+        src/graph/graphMixins/NormalizeCouplingWithChildren.cpp
+        src/graph/ExplicitCouplingGraph.cpp
+        src/graph/SimilarityCouplingGraph.cpp
+        src/graph/ModuleDistanceCouplingGraph.cpp
+        src/graph/WeightCombinedGraph.cpp
+        src/graph/ResultCachedGraph.cpp
+        src/DataStorage.cpp
+        src/CommandExecutor.cpp
+        src/ProgressDisplay.cpp
         )
 
 
