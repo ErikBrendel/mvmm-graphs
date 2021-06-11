@@ -55,5 +55,7 @@ double WeightCombinedGraph::getNormalizedCoupling(const string& a, const string&
 }
 
 void WeightCombinedGraph::printStatistics() {
-    cout << "Combined graph statistics WIP" << endl;
+    cout << "Combined Graph:" << endl;
+    cout << "  " << join(graphs, ", ", [](const shared_ptr<CouplingGraph>& g) { return g->getName(); }) << endl;
+    cout << "  " << join(weights, ", ") << endl;
 }

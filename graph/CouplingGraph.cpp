@@ -30,18 +30,18 @@ string CouplingGraph::getParent(const string& node) {
     return join(parts, "/");
 }
 
-string picklePathParentDir(const string& repoName, const string& name, const string& storageDir) {
+string saveLocationParentDir(const string& repoName, const string& storageDir) {
     return storageDir + repoName;
 }
 
-string picklePath(const string& repoName, const string& name, const string& storageDir) {
-    return storageDir + repoName + "/" + name + ".graph";
+string CouplingGraph::saveLocation(const string& repoName, const string& name, const string& storageDir) {
+    return saveLocationParentDir(repoName, storageDir) + "/" + name + ".graph";
 }
 
 void CouplingGraph::save(const string& repoName, const string& storageDir) {
-    string fullPath = picklePath(repoName, name, storageDir);
-    experimental::filesystem::create_directories(picklePathParentDir(repoName, name, storageDir));
-    ofstream out(picklePath(repoName, name, storageDir), ios::trunc);
+    string fullPath = saveLocation(repoName, name, storageDir);
+    experimental::filesystem::create_directories(saveLocationParentDir(repoName, storageDir));
+    ofstream out(saveLocation(repoName, name, storageDir), ios::trunc);
     out.precision(10);
     out << fixed;
     plaintextSave(out);
@@ -49,7 +49,7 @@ void CouplingGraph::save(const string& repoName, const string& storageDir) {
 }
 
 shared_ptr<CouplingGraph> CouplingGraph::load(const string& repoName, const string& name, const string& storageDir) {
-    string fullPath = picklePath(repoName, name, storageDir);
+    string fullPath = saveLocation(repoName, name, storageDir);
     ifstream input(fullPath);
     string type;
     getline(input, type);

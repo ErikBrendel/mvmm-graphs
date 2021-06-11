@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <functional>
 #include <utility>
+#include <iostream>
 
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (int i = 0; i < (n); ++i)
@@ -18,11 +19,39 @@
 
 template<typename s, typename v>
 s& operator<<(s& str, std::vector<v> vec) {
+    str << "[";
     rep(i, vec.size()) {
         if (i != 0) str << ", ";
         str << vec[i];
     }
+    str << "]";
     return str;
+}
+
+template <typename T>
+void printAbbrev(const std::vector<T>& data) {
+    if (data.empty()) {
+        std::cout << "Empty List";
+    } else if (data.size() <= 10) {
+        std::cout << data;
+    } else {
+        std::cout << "[";
+        for (int i = 0; i < 5; ++i) {
+            std::cout << data[i];
+            std::cout << ", ";
+        }
+        std::cout << "...";
+        for (int i = data.size() - 5; i < data.size(); ++i) {
+            std::cout << ", ";
+            std::cout << data[i];
+        }
+        std::cout << "]";
+    }
+}
+
+template <typename T>
+double mean(const std::vector<T>& elements) {
+    return accumulate(all(elements), 0.0) / elements.size();
 }
 
 //#define randRange(upperBound) (rand() % (upperBound))
@@ -66,16 +95,21 @@ struct pair_hash {
 // join a vector of elements by a delimiter object.  ostream<< must be defined
 // for both class S and T and an ostream, as it is e.g. in the case of strings
 // and character arrays
-template<class S, class T>
-std::string join(std::vector<T>& elems, S& delim) {
+// the optional lambda is applied to each element before outputting it.
+template<class S, class T, typename E2S>
+std::string join(std::vector<T>& elems, S& delim, E2S&& e2s) {
     if (elems.empty()) return "";
     std::stringstream ss;
     typename std::vector<T>::iterator e = elems.begin();
-    ss << *e++;
+    ss << e2s(*e++);
     for (; e != elems.end(); ++e) {
-        ss << delim << *e;
+        ss << delim << e2s(*e);
     }
     return ss.str();
+}
+template<class S, class T>
+std::string join(std::vector<T>& elems, S& delim) {
+    return join(elems, delim, [](const T& t) { return t; });
 }
 // thanks to Evan Teran, http://stackoverflow.com/questions/236129/how-to-split-a-string/236803#236803
 

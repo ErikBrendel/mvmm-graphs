@@ -20,6 +20,10 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
         {"save", "graphId repoName storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.save(stoi(args[0]), args[1], args[2]);
         }},
+        {"getSaveLocation", "repoName name storageDir", [](DataStorage& dataStorage, const vector<string>& args) {
+            string result = CouplingGraph::saveLocation(args[0], args[1], args[2]);
+            cout << RESULT << result << endl;
+        }},
 
         {"createExplicit", "name", [](DataStorage& dataStorage, const vector<string>& args) {
             int result = dataStorage.createExplicit(args[0]);
@@ -130,6 +134,12 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
             ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
             explicitGraph->addAndSupport(args[1], args[2], stof(args[3]));
+        }},
+        {"explicitRemoveSmallComponents", "graphId minimumComponentSize", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            explicitGraph->removeSmallComponents(stoi(args[1]));
         }},
         {"explicitCutoffEdges", "graphId minimumWeight", [](DataStorage& dataStorage, const vector<string>& args) {
             const auto& graph = dataStorage.getG(args[0]);

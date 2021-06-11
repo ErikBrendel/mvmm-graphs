@@ -11,7 +11,7 @@ double ResultCachedGraph::getNormalizedSupport(const string& node) {
     auto found = supportCache.find(node);
     if (found == supportCache.end()) {
         double support = wrapped->getNormalizedSupport(node);
-        found->second = support;
+        supportCache[node] = support;
         return support;
     } else {
         return found->second;
@@ -23,7 +23,7 @@ double ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b
     auto found = couplingCache.find(key);
     if (found == couplingCache.end()) {
         double coupling = wrapped->getNormalizedCoupling(a, b);
-        found->second = coupling;
+        couplingCache[key] = coupling;
         return coupling;
     } else {
         return found->second;
@@ -31,5 +31,5 @@ double ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b
 }
 
 void ResultCachedGraph::printStatistics() {
-    // nothing
+    cout << "Result cached graph of: " << wrapped->getName() << endl;
 }

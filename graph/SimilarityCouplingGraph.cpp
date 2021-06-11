@@ -1,6 +1,7 @@
 #include "SimilarityCouplingGraph.h"
 #include "../util.h"
 #include <iostream>
+#include <algorithm>
 
 using namespace std;
 
@@ -104,7 +105,32 @@ void SimilarityCouplingGraph::plaintextLoad(istream& in) {
 }
 
 void SimilarityCouplingGraph::printStatistics() {
-    plaintextSave(cout);
+    auto nodeCount = coords.size();
+    if (nodeCount == 0) {
+        cout << "Empty SimilarityCouplingGraph!" << endl;
+        return;
+    }
+    auto dim = coords.begin()->second.size();
+    vector<double> minCoord(dim);
+    vector<double> maxCoord(dim);
+    for (const auto& [key, val]: coords) {
+        rep(d, dim) {
+            minCoord[d] = min(minCoord[d], val[d]);
+            maxCoord[d] = max(maxCoord[d], val[d]);
+        }
+    }
+    cout << "SimilarityCouplingGraph statistics: " << nodeCount << " nodes" << endl;
+    cout << "Min Coordinates" << minCoord << endl;
+    cout << "Max Coordinates" << maxCoord << endl;
+    vector<double> supports;
+    supports.reserve(nodeCount);
+    for (const auto& [key, val]: support) {
+        supports.push_back(val);
+    }
+    sort(all(supports));
+    cout << "Node support values: ";
+    printAbbrev(supports);
+    cout << ", mean: " << mean(supports) << endl;
 }
 
 double SimilarityCouplingGraph::getNormalizedSupport(const string& node) {

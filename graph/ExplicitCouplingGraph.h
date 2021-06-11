@@ -30,7 +30,10 @@ public:
 
     void addAndSupport(const string& a, const string& b, double delta);
 
+    void removeNode(const string& node);
+
     void cutoffEdges(double minimumWeight);
+    void removeSmallComponents(int minimumComponentSize);
     void propagateDown(int layers = 1, double weightFactor = 0.2f);
     void dilate(int iterations = 1, double weightFactor = 0.2f);
 
@@ -47,6 +50,8 @@ private:
     uint getNodeIndex(const string& node);
     void addI(uint a, uint b, double delta);
     unordered_map<uint, vector<uint>> getChildrenDict();
+    unordered_set<uint> plainBfs(uint source);
+    vector<unordered_set<uint>> connectedComponents();
 };
 
 

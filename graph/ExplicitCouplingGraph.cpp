@@ -85,6 +85,23 @@ void ExplicitCouplingGraph::addAndSupport(const string& a, const string& b, doub
     addSupport(b, delta);
 }
 
+void ExplicitCouplingGraph::removeNode(const string& node) {
+    auto found = node2i.find(node);
+    if (found == node2i.end()) {
+        return;
+    }
+    auto nodeIndex = found->second;
+    auto lastNodeIndex = adj.size() - 1;
+    node2i.erase(found);
+
+    supports[nodeIndex] = supports[lastNodeIndex];
+    supports.pop_back();
+    adj[nodeIndex] = adj[lastNodeIndex];
+    adj.pop_back();
+    i2node[nodeIndex] = i2node[lastNodeIndex];
+    i2node.pop_back();
+}
+
 void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
     for (unordered_map<uint, double>& edgeList : adj) {
         // https://stackoverflow.com/a/9515446/4354423 remove from map by condition
@@ -98,6 +115,21 @@ void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
     }
 }
 
+void ExplicitCouplingGraph::removeSmallComponents(int minimumComponentSize) {
+    auto cc = connectedComponents();
+    vector<string> nodesToRemove;
+    for (const auto& component: cc) {
+        if (component.size() < minimumComponentSize) {
+            for (uint node: component) {
+                nodesToRemove.push_back(i2node[node]);
+            }
+        }
+    }
+    for (const auto& node: nodesToRemove) {
+        removeNode(node);
+    }
+}
+
 void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
     unordered_map<uint, vector<uint>> childrenDict = getChildrenDict();
     vector<uint> childHavingNodes;
@@ -106,7 +138,7 @@ void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
     }
     sort(all(childHavingNodes), [&](uint a, uint b) {
         return count(all(i2node[a]), '/') > count(all(i2node[b]), '/');
-    }); // TODO is this the right order?
+    });
 
     rep(iteration, layers) {
         vector<tuple<uint, uint, double>> changesToApply;
@@ -260,7 +292,36 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
 }
 
 void ExplicitCouplingGraph::printStatistics() {
-    plaintextSave(cout);
+    auto nodeCount = adj.size();
+    auto edgeCount = accumulate(all(adj), 0, [](int acc, const unordered_map<uint, double>& edgeList){return acc + edgeList.size();});
+    auto cc = connectedComponents();
+    sort(all(cc), [](const unordered_set<uint>& a, const unordered_set<uint>& b){return a.size() < b.size();});
+    vector<int> ccSizes(cc.size());
+    rep(i, cc.size()) {
+        ccSizes[i] = cc[i].size();
+    }
+    cout << "ExplicitCouplingGraph statistics: " <<
+         nodeCount << " nodes, " <<
+         edgeCount << " edges, " <<
+         cc.size() << " connected components, with sizes: ";
+    printAbbrev(ccSizes);
+    cout << endl;
+    vector<double> edgeWeights;
+    edgeWeights.reserve(edgeCount);
+    for (const auto& edgeList: adj) {
+        for (const auto& [n, w]: edgeList) {
+            edgeWeights.push_back(w);
+        }
+    }
+    sort(all(edgeWeights));
+    vector<double> nodeSupports(supports);
+    sort(all(nodeSupports));
+    cout << "Edge weights: ";
+    printAbbrev(edgeWeights);
+    cout << ", mean: " << mean(edgeWeights) << endl;
+    cout << "Node support values: ";
+    printAbbrev(nodeSupports);
+    cout << ", mean: " << mean(nodeSupports) << endl;
 }
 
 const unordered_set<string>& ExplicitCouplingGraph::getChildren(const string& node) {
@@ -273,4 +334,37 @@ double ExplicitCouplingGraph::getNormalizedSupport(const string& node) {
 
 double ExplicitCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     return NormalizeCouplingWithChildren::getNormalizedCoupling(a, b);
+}
+
+unordered_set<uint> ExplicitCouplingGraph::plainBfs(uint source) {
+    unordered_set<uint> seen;
+    unordered_set<uint> nextLevel;
+    nextLevel.insert(source);
+    while (!nextLevel.empty()) {
+        auto thisLevel = nextLevel;
+        nextLevel.clear();
+        for (const auto& v: thisLevel) {
+            if (seen.find(v) == seen.end()) {
+                seen.insert(v);
+                for (const auto& [n, w]: adj[v]) {
+                    nextLevel.insert(n);
+                }
+            }
+        }
+    }
+    return seen;
+}
+
+vector<unordered_set<uint>> ExplicitCouplingGraph::connectedComponents() {
+    vector<unordered_set<uint>> result;
+    vector<bool> seen(adj.size(), false);
+    rep(v, adj.size()) {
+        if (!seen[v]) {
+            result.push_back(plainBfs(v));
+            for (uint s: result.back()) {
+                seen[s] = true;
+            }
+        }
+    }
+    return result;
 }
