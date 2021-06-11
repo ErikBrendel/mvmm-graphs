@@ -186,6 +186,7 @@ void printHelpFn() {
     for (const auto& command: handlers) {
         cout << " - " << get<0>(command) << " " << get<1>(command) << endl;
     }
+    cout.flush();
 }
 
 
@@ -199,6 +200,7 @@ void CommandExecutor::tryExecuteCommand(const string& command) {
         }
         cerr << "Failed to execute command " << commandDisplay << "!" << endl;
         cerr << "Error: " << e.what() << endl;
+        cerr.flush();
     }
 }
 
@@ -236,4 +238,5 @@ void CommandExecutor::executeCommand(const string& command) {
         }
     }
     cerr << "Unknown command: " << cmd << endl;
+    cerr.flush();
 }

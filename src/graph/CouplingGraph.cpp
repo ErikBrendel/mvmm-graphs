@@ -45,6 +45,7 @@ void CouplingGraph::save(const string& repoName, const string& storageDir) {
     out.precision(10);
     out << fixed;
     plaintextSave(out);
+    out.flush();
     out.close();
 }
 

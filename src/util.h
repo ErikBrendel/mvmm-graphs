@@ -11,6 +11,7 @@
 #include <utility>
 #include <iostream>
 
+#define endl "\n"
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (int i = 0; i < (n); ++i)
 #define rep_all_pairs(i, j, n) for (int i = 0; i < (n) - 1; i++) for(int j = i + 1; j < (n); j++)
