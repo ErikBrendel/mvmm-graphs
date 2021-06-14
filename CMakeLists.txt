@@ -24,7 +24,7 @@ add_executable(coupling_graphs
         src/DataStorage.cpp
         src/CommandExecutor.cpp
         src/ProgressDisplay.cpp
-        )
+        src/BestResultSet.h)
 
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)

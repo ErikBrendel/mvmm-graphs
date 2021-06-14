@@ -11,6 +11,7 @@
 #include "util.h"
 #include "DataStorage.h"
 #include "CommandExecutor.h"
+#include "BestResultSet.h"
 
 
 using namespace std;
@@ -27,21 +28,10 @@ void mainLoop() {
 int main() {
     cout.precision(10);
     cout << fixed;
-    // mainLoop();
+    mainLoop();
 
-    orgQhull::Qhull qhull;
-    orgQhull::RboxPoints points("20 D2");
-    qhull.runQhull(points, "");
-    auto vertices = qhull.vertexList();
-    for (auto it = vertices.constBegin(); it != vertices.constEnd(); ++it) {
-        const auto& vert = it->point();
-        vector<double> p(vert.dimension());
-        rep(d, vert.dimension()) {
-            p.push_back(vert[d]);
-        }
-        cout << p << endl;
-    }
-
+    // BestResultSet<int> brs(4, 100);
+    // brs.trim();
 
     return 0;
 }

@@ -1,0 +1,167 @@
+#pragma once
+
+#include "util.h"
+
+#include <unordered_set>
+#include <libqhullcpp/Qhull.h>
+#include <libqhullcpp/QhullVertex.h>
+
+using namespace std;
+
+template <typename UserData>
+class BestResultSet {
+private:
+    int dimensionCount;
+    int resultKeepSize;
+    vector<pair<vector<double>, UserData>> data;
+    int totalAmount;
+public:
+    BestResultSet(int dimensionCount, int resultKeepSize);
+
+    void addAll(const vector<pair<vector<double>, UserData>>& newData);
+    void add(const pair<vector<double>, UserData>& newData);
+
+    vector<pair<vector<double>, UserData>> getBest(const vector<double>& dimWeights);
+
+    void trim();
+};
+
+template<typename UserData>
+BestResultSet<UserData>::BestResultSet(int dimensionCount, int resultKeepSize) :
+    dimensionCount(dimensionCount), resultKeepSize(resultKeepSize), data(), totalAmount(0) {}
+
+template<typename UserData>
+void BestResultSet<UserData>::addAll(const vector<pair<vector<double>, UserData>>& newData) {
+    for (const auto& datum: newData) {
+        data.push_back(datum);
+    }
+    totalAmount += newData.size();
+}
+
+template<typename UserData>
+void BestResultSet<UserData>::add(const pair<vector<double>, UserData>& newData) {
+    data.push_back(newData);
+    totalAmount++;
+}
+
+template<typename UserData>
+vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const vector<double>& dimWeights) {
+    sort(all(data), [&](const pair<vector<double>, UserData>& a, const pair<vector<double>, UserData>& b) {
+        double agg = 0;
+        rep(d, dimensionCount) {
+            agg += dimWeights[d] * (a.first[d] - b.first[d]);
+        }
+        return agg < 0;
+    });
+    vector<pair<vector<double>, UserData>> result;
+    result.reserve(resultKeepSize);
+    rep(i, resultKeepSize) {
+        result.push_back(data[i]);
+    }
+    return result;
+}
+
+#define RANDOM_SEED 42
+std::mt19937 my_brs_random_engine(RANDOM_SEED);
+
+template<typename UserData>
+void BestResultSet<UserData>::trim() {
+    if (data.size() < 10) return;
+
+    try {
+        shuffle(all(data), my_brs_random_engine);
+        unordered_set<int> hullPoints;
+        vector<pair<vector<double>, int>> dataCoordinatesIndices;
+        dataCoordinatesIndices.reserve(data.size());
+        rep(ind, data.size()) {
+            dataCoordinatesIndices.emplace_back(data[ind].first, ind);
+        }
+
+        vector<vector<double>> hullData;
+        rep(_it, resultKeepSize) {
+            for (int d = dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
+                auto referenceValue = dataCoordinatesIndices.front().first[d];
+                bool allValuesAreClose = true;
+                for (const auto& [x, ind]: dataCoordinatesIndices) {
+                    if (abs(x[d] - referenceValue) >= 0.000001) {
+                        allValuesAreClose = false;
+                        break;
+                    }
+                }
+                if (allValuesAreClose) {
+                    cout << "Removing degenerate dimension " << d << endl;
+                    for (auto& element : dataCoordinatesIndices) {
+                        element.first.erase(element.first.begin() + d);
+                    }
+                    hullData.clear();
+                }
+            }
+            int dimensions = dataCoordinatesIndices.front().first.size();
+            if (dimensions < 2) {
+                return; // degenerate nodes? just don't trim...
+            }
+            if (hullData.empty()) {
+                // add fake points to limit the hull to our quadrant only
+                rep(_p, dimensions + 1) {
+                    vector<double> corner(dimensions, 1);
+                    hullData.push_back(corner);
+                }
+                for (const auto& [x, ind] : dataCoordinatesIndices) {
+                    hullData.push_back(x);
+                }
+            }
+            // update outer points
+            vector<double> minValues(dimensions, 9999);
+            for (const auto& [coords, ind]: dataCoordinatesIndices) {
+                rep(d, dimensions) {
+                    minValues[d] = min(minValues[d], coords[d] + 0.000001);
+                }
+            }
+            auto fakePointCount = dimensions + 1;
+            rep(d, dimensions) {
+                hullData[d][d] = minValues[d];
+            }
+            // do the hull
+            vector<double> pointData;
+            pointData.reserve(dimensions * hullData.size());
+            for (const auto& p: hullData) {
+                rep(d, dimensions) {
+                    pointData.push_back(p[d]);
+                }
+            }
+            //Qhull(const char *inputComment2, int pointDimension, int pointCount, const double *pointCoordinates, const char *qhullCommand2);
+            orgQhull::Qhull hull("", dimensions, hullData.size(), pointData.data(), ""); // qhull_options="Qs QJ0.001" ?
+
+            vector<int> actualIndices;
+            for (const orgQhull::QhullVertex& element: hull.vertexList()) {
+                auto i = element.id();
+                if (i >= fakePointCount) {
+                    actualIndices.push_back(i - fakePointCount);
+                }
+            }
+            for (const auto& ind: actualIndices) {
+                hullPoints.insert(ind);
+            }
+            removeIndices(dataCoordinatesIndices, actualIndices);
+            rep(i, actualIndices.size()) actualIndices[i] += fakePointCount; // shift indices to properly operate in hullData array
+            removeIndices(hullData, actualIndices);
+            if (dataCoordinatesIndices.size() < dimensions + 2) {
+                return; // just abort the whole trimming: all of the data points are important!
+            }
+
+        }
+        cout << "Reduced result size from " << data.size() << " to " << hullPoints.size() << endl;
+        vector<pair<vector<double>, UserData>> newData;
+        for (const auto& ind: hullPoints) {
+            newData.push_back(data[ind]);
+        }
+        data.swap(newData);
+    } catch (const std::exception &e) {
+        cerr << "QHull crashed! No trimming will be performed: " << e.what() << endl;
+    } catch (...) {
+        auto e = current_exception();
+        cerr << "QHull crashed with unknown exception! No trimming will be performed." << endl;
+    }
+}
+
+

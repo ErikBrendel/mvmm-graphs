@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstring>
 #include <string>
+#include <unordered_set>
 #include <unordered_map>
 #include <functional>
 #include <utility>
@@ -121,3 +122,33 @@ std::vector<std::string>  split(const std::string &s, char delim);
 // split a string on any character found in the string of delimiters (delims)
 std::vector<std::string>& split(const std::string &s, const std::string& delims, std::vector<std::string> &elems);
 std::vector<std::string>  split(const std::string &s, const std::string& delims);
+
+template <typename T, typename I>
+void removeIndices(std::vector<T>& listToModify, std::vector<I> indicesList) {
+    // removes all the elements in the list_to_modify, and fills those empty places up
+    // with not-to-removable elements from the back of the list, super-fast.
+    // assumes that the second parameter is way smaller than the first one
+    // inspired by: https://stackoverflow.com/a/8313120/4354423
+    sort(all(indicesList));
+    std::unordered_set<I> indicesSet;
+    indicesSet.reserve(indicesList.size());
+    for (const auto& i: indicesList) {
+        indicesSet.insert(i);
+    }
+    int backMovePointer = listToModify.size();
+    while (indicesSet.find(backMovePointer) != indicesSet.end()) {
+        backMovePointer--;
+    }
+    for (const auto& indexToRemove: indicesList) {
+        if (indexToRemove >= backMovePointer) {
+            break;
+        }
+        listToModify[indexToRemove] = listToModify[backMovePointer];
+        backMovePointer--;
+        while (indicesSet.find(backMovePointer) != indicesSet.end()) {
+            backMovePointer--;
+        }
+    }
+    int resultLength = listToModify.size() - indicesList.size();
+    listToModify.erase(listToModify.begin() + resultLength, listToModify.end()); // del list_to_modify[result_length:]
+}
