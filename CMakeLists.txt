@@ -29,4 +29,5 @@ add_executable(coupling_graphs
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
-target_link_libraries(coupling_graphs PRIVATE Threads::Threads stdc++fs)
+find_package(Qhull REQUIRED)
+target_link_libraries(coupling_graphs PRIVATE Threads::Threads stdc++fs qhullcpp qhull_r)
