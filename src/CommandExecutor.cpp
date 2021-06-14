@@ -79,7 +79,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             cout << RESULT << result << endl;
         }},
         {"getGraphNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
-            auto nodes = dataStorage.getG(args[0])->getNodeSet();
+            const auto& nodes = dataStorage.getG(args[0])->getNodeSet();
             cout << RESULT;
             rep(i, nodes.size()) {
                 if (i > 0) cout << "|";
