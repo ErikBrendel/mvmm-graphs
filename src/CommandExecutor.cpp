@@ -220,7 +220,9 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
 
             cout << RESULT;
             bool first = true;
-            for (const auto& result: results) {
+            rep(r, results.size()) {
+                const auto& result = results[r];
+                if (r != 0) cout << "|"; // which will lead to an empty string, separating the BRSs
                 for (const auto& [coords, userData]: result->getAllData()) {
                     for (double v: coords) {
                         if (first) first = false; else cout << "|";
