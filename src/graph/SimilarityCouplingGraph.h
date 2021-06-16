@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CouplingGraph.h"
-#include "graphMixins/NormalizeSupport.h"
-
 #include <string>
 #include <vector>
 #include <unordered_map>
+
+#include "CouplingGraph.h"
+#include "graphMixins/NormalizeSupport.h"
 
 using namespace std;
 

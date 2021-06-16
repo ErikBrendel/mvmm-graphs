@@ -1,7 +1,9 @@
 #include "SimilarityCouplingGraph.h"
-#include "../util.h"
+
 #include <iostream>
 #include <algorithm>
+
+#include "../util.h"
 
 using namespace std;
 
@@ -64,7 +66,7 @@ double jensenShannonArraySimilarity(const vector<double>& a, const vector<double
     return sqrt(js / divisor);
 }
 
-float DOCUMENT_SIMILARITY_EXP = 8;  // higher = lower equality values, lower = equality values are all closer to 1
+double DOCUMENT_SIMILARITY_EXP = 8;  // higher = lower equality values, lower = equality values are all closer to 1
 
 double SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
     auto coordsA = coords.find(a);

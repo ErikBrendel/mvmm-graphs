@@ -1,5 +1,6 @@
-#include <iostream>
 #include "ProgressDisplay.h"
+
+#include <iostream>
 
 void ProgressDisplay::init(const string& description, int maximum) {
     ProgressDisplay::description = description;

@@ -1,5 +1,7 @@
-#include <iostream>
 #include "WeightCombinedGraph.h"
+
+#include <iostream>
+
 #include "../util.h"
 
 vector<string> getGraphNodeSetCombination(const vector<shared_ptr<CouplingGraph>>& graphs) {

@@ -1,10 +1,7 @@
-//
-// Created by erik on 08.06.21.
-//
-
 #include "NodeSetCouplingGraph.h"
 
-#include "iostream"
+#include <iostream>
+
 #include "../util.h"
 
 using namespace std;

@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "disagreementAnalysis.h"
+
 using namespace std;
 
 
@@ -178,6 +180,60 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
                 weights.push_back(stof(args[i]));
             }
             combinedGraph->setWeights(weights);
+        }},
+        
+        /*{"createBestResultSet", "dimensions resultKeepSize", [](DataStorage& dataStorage, const vector<string>& args) {
+            auto result = dataStorage.createBestResultSet(stoi(args[0]), stoi(args[1]));
+            cout << RESULT << result << endl;
+        }},
+        {"getFromBestResultSet", "id weights...", [](DataStorage& dataStorage, const vector<string>& args) {
+            auto brs = dataStorage.getBestResultSet(stoi(args[0]));
+            ensure(args.size() == brs->getDimensions() + 1, "Weight data needs to match previously configured amount of dimensions!")
+            vector<double> weights;
+            for (int i = 1; i < args.size(); ++i) {
+                weights.push_back(stod(args[i]));
+            }
+            auto result = brs->getBest(weights);
+            cout << RESULT << result << endl;
+        }},
+        {"trimBestResultSet", "id", [](DataStorage& dataStorage, const vector<string>& args) {
+            dataStorage.getBestResultSet(stoi(args[0]))->trim();
+        }},*/
+        {"findDisagreements", "nodeSetId resultSize graphAmount graphs... patternsComponents...", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& ns = *dataStorage.getNodeSet(args[0]);
+            int resultSize = stoi(args[1]);
+            int graphAmount = stoi(args[2]);
+            ensure(graphAmount >= 2, "At least two graphs are required!")
+            ensure((args.size() - 3) % graphAmount == 0, "Argument amount does not match!")
+            vector<shared_ptr<CouplingGraph>> graphs;
+            rep(i, graphAmount) {
+                graphs.push_back(dataStorage.getG(args[3 + i]));
+            }
+            vector<vector<double>> patterns;
+            for (int p = 3 + graphAmount; p < args.size(); p += graphAmount) {
+                patterns.emplace_back();
+                rep(i, graphAmount) {
+                    patterns.back().push_back(stod(args[p + i]));
+                }
+            }
+            auto results = analyzeDisagreements(ns, graphs, patterns, resultSize);
+
+            cout << RESULT;
+            bool first = true;
+            for (const auto& result: results) {
+                for (const auto& [coords, userData]: result->getAllData()) {
+                    for (double v: coords) {
+                        if (first) first = false; else cout << "|";
+                        cout << v;
+                    }
+                    cout << "|" << get<0>(userData);
+                    cout << "|" << get<1>(userData);
+                    for (double v: get<2>(userData)) {
+                        cout << "|" << v;
+                    }
+                }
+            }
+            cout << endl;
         }},
 };
 

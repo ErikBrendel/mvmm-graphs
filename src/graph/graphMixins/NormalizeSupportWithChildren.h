@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_set>
+
 #include "NormalizeSupport.h"
 
 class NormalizeSupportWithChildren : public NormalizeSupport {

@@ -1,9 +1,9 @@
 #pragma once
 
+#include <unordered_map>
+
 #include "CouplingGraph.h"
 #include "../util.h"
-
-#include <unordered_map>
 
 using namespace std;
 

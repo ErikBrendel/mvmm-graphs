@@ -1,12 +1,14 @@
 #pragma once
 
-#include "util.h"
-
 #include <unordered_set>
 #include <libqhullcpp/Qhull.h>
 #include <libqhullcpp/QhullVertex.h>
 
+#include "util.h"
+
 using namespace std;
+
+#define RANDOM_SEED 42
 
 template <typename UserData>
 class BestResultSet {
@@ -15,20 +17,26 @@ private:
     int resultKeepSize;
     vector<pair<vector<double>, UserData>> data;
     int totalAmount;
+    mt19937 my_brs_random_engine;
+
 public:
     BestResultSet(int dimensionCount, int resultKeepSize);
 
+    [[nodiscard]] int getDimensions() const { return dimensionCount; }
+
     void addAll(const vector<pair<vector<double>, UserData>>& newData);
     void add(const pair<vector<double>, UserData>& newData);
+    void add(const vector<double>& coords, const UserData& userData);
 
     vector<pair<vector<double>, UserData>> getBest(const vector<double>& dimWeights);
+    const vector<pair<vector<double>, UserData>>& getAllData() const;
 
     void trim();
 };
 
 template<typename UserData>
 BestResultSet<UserData>::BestResultSet(int dimensionCount, int resultKeepSize) :
-    dimensionCount(dimensionCount), resultKeepSize(resultKeepSize), data(), totalAmount(0) {}
+    dimensionCount(dimensionCount), resultKeepSize(resultKeepSize), data(), totalAmount(0), my_brs_random_engine(RANDOM_SEED) {}
 
 template<typename UserData>
 void BestResultSet<UserData>::addAll(const vector<pair<vector<double>, UserData>>& newData) {
@@ -42,6 +50,11 @@ template<typename UserData>
 void BestResultSet<UserData>::add(const pair<vector<double>, UserData>& newData) {
     data.push_back(newData);
     totalAmount++;
+}
+
+template<typename UserData>
+void BestResultSet<UserData>::add(const vector<double>& coords, const UserData& userData) {
+    add(make_pair(coords, userData));
 }
 
 template<typename UserData>
@@ -61,12 +74,15 @@ vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const ve
     return result;
 }
 
-#define RANDOM_SEED 42
-std::mt19937 my_brs_random_engine(RANDOM_SEED);
+template<typename UserData>
+const vector<pair<vector<double>, UserData>>& BestResultSet<UserData>::getAllData() const {
+    return data;
+}
+
 
 template<typename UserData>
 void BestResultSet<UserData>::trim() {
-    if (data.size() < 10) return;
+    if (data.size() < resultKeepSize || data.size() < 10) return;
 
     try {
         shuffle(all(data), my_brs_random_engine);
@@ -79,7 +95,7 @@ void BestResultSet<UserData>::trim() {
 
         vector<vector<double>> hullData;
         rep(_it, resultKeepSize) {
-            for (int d = dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
+            for (int d = (int)dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
                 auto referenceValue = dataCoordinatesIndices.front().first[d];
                 bool allValuesAreClose = true;
                 for (const auto& [x, ind]: dataCoordinatesIndices) {
@@ -163,5 +179,4 @@ void BestResultSet<UserData>::trim() {
         cerr << "QHull crashed with unknown exception! No trimming will be performed." << endl;
     }
 }
-
 

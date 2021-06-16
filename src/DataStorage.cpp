@@ -64,3 +64,15 @@ int DataStorage::addNodeSet(const shared_ptr<vector<string>>& nodeSet) {
     nodeSetArray.push_back(nodeSet);
     return (int)nodeSetArray.size() - 1;
 }
+
+int DataStorage::createBestResultSet(int dimensions, int resultKeepSize) {
+    bestResultSets.push_back(make_shared<BestResultSet<BrsUserData>>(dimensions, resultKeepSize));
+    return (int)bestResultSets.size() - 1;
+}
+
+shared_ptr<BestResultSet<BrsUserData>> DataStorage::getBestResultSet(int brsIndex) const {
+    if (brsIndex < 0 || brsIndex >= bestResultSets.size()) {
+        throw runtime_error("BestResultSet index " + to_string(brsIndex) + " out of range!");
+    }
+    return bestResultSets[brsIndex];
+}

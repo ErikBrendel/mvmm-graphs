@@ -1,9 +1,8 @@
 #pragma once
 
-#include "CouplingGraph.h"
-#include "CouplingGraph.h"
-
 #include <unordered_set>
+
+#include "CouplingGraph.h"
 
 using namespace std;
 

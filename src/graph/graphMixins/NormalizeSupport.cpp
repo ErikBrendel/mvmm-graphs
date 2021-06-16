@@ -1,8 +1,9 @@
 #include "NormalizeSupport.h"
-#include "../../util.h"
 
 #include <algorithm>
 #include <iostream>
+
+#include "../../util.h"
 
 using namespace std;
 

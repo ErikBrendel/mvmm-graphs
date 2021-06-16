@@ -11,8 +11,9 @@
 #include <functional>
 #include <utility>
 #include <iostream>
+#include <algorithm>
 
-#define endl "\n"
+// #define endl "\n" // broken, sadly
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (int i = 0; i < (n); ++i)
 #define rep_all_pairs(i, j, n) for (int i = 0; i < (n) - 1; i++) for(int j = i + 1; j < (n); j++)
@@ -59,7 +60,10 @@ double mean(const std::vector<T>& elements) {
 //#define randRange(upperBound) (rand() % (upperBound))
 //#define randRange(upperBound) std::uniform_int_distribution<int>(0, upperBound)(my_randomEngine)
 
-double square(double val);
+template <typename T>
+T square(T val) {
+    return val * val;
+}
 
 
 // from https://stackoverflow.com/q/2590677/4354423
@@ -87,7 +91,7 @@ struct pair_hash {
 
 
 #define startsWith(a, b) ((a).rfind((b), 0) == 0)
-#define contains(a, b) ((a).find((b), 0) != std::string::npos)
+#define stringContains(a, b) ((a).find((b), 0) != std::string::npos)
 
 
 // string split and join functions from here:

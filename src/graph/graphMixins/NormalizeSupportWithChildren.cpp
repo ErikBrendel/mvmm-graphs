@@ -1,5 +1,6 @@
-#include <iostream>
 #include "NormalizeSupportWithChildren.h"
+
+#include <iostream>
 
 double NormalizeSupportWithChildren::getAbsoluteSupport(const string& node) {
     auto cacheEntry = absoluteSupportPerNodeCache.find(node);

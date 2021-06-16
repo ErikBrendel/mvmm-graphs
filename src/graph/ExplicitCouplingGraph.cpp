@@ -1,9 +1,10 @@
 #include "ExplicitCouplingGraph.h"
-#include "../ProgressDisplay.h"
-#include "../util.h"
 
 #include <iostream>
 #include <algorithm>
+
+#include "../ProgressDisplay.h"
+#include "../util.h"
 
 ExplicitCouplingGraph::ExplicitCouplingGraph(const string& name)
     : NodeSetCouplingGraph(name) {}

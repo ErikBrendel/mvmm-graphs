@@ -1,8 +1,9 @@
 #include "NormalizeCouplingWithChildren.h"
 
+#include <unordered_set>
+
 #include "../../util.h"
 #include "../CouplingGraph.h"
-#include <unordered_set>
 
 using namespace std;
 
