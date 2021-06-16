@@ -85,19 +85,15 @@ void BestResultSet<UserData>::trim() {
     if (data.size() < resultKeepSize || data.size() < 10) return;
 
     try {
-        cout << "Trying to trim!" << endl;
         shuffle(all(data), my_brs_random_engine);
-        cout << "shuffled!" << endl;
         unordered_set<int> hullPoints;
         vector<pair<vector<double>, int>> dataCoordinatesIndices;
         dataCoordinatesIndices.reserve(data.size());
         rep(ind, data.size()) {
             dataCoordinatesIndices.emplace_back(data[ind].first, ind);
         }
-        cout << "dataCoordinatesIndices created: " << dataCoordinatesIndices.size() << endl;
 
         rep(_it, resultKeepSize) {
-            cout << "Trimming loop: " << _it << endl;
             for (int d = (int)dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
                 auto referenceValue = dataCoordinatesIndices.front().first[d];
                 bool allValuesAreClose = true;
@@ -115,7 +111,6 @@ void BestResultSet<UserData>::trim() {
                 }
             }
             int dimensions = dataCoordinatesIndices.front().first.size();
-            cout << "dimensions: " << dimensions << endl;
             if (dimensions < 2) {
                 return; // degenerate nodes? just don't trim...
             }
@@ -123,7 +118,6 @@ void BestResultSet<UserData>::trim() {
             auto fakePointCount = dimensions + 1;
             vector<double> pointData;
             pointData.reserve(dimensions * (dataCoordinatesIndices.size() + dimensions + 1));
-            cout << "creating hull data" << endl;
             // add dim+1 fake points to limit the hull to our quadrant only
             rep(_p, dimensions + 1) {
                 rep(i, dimensions) pointData.push_back(1); // actual values are set later
@@ -131,7 +125,6 @@ void BestResultSet<UserData>::trim() {
             for (const auto& [x, ind] : dataCoordinatesIndices) {
                 rep(i, dimensions) pointData.push_back(x[i]);
             }
-            cout << "hull data created: " << pointData.size() << " (" << (pointData.size() / dimensions) << ")" << endl;
             // update outer points
             vector<double> minValues(dimensions, 9999);
             for (const auto& [coords, ind]: dataCoordinatesIndices) {
@@ -143,12 +136,8 @@ void BestResultSet<UserData>::trim() {
                 // each of the outer points (d) gets one coordinate (d) updated to the min value
                 pointData[d * dimensions + d] = minValues[d];
             }
-            cout << "updated outer points" << endl;
-            cout << "got pointData: " << pointData.size() << endl;
             //Qhull(const char *inputComment2, int pointDimension, int pointCount, const double *pointCoordinates, const char *qhullCommand2);
             orgQhull::Qhull hull("", dimensions, (int)pointData.size() / dimensions, pointData.data(), ""); // qhull_options="Qs QJ0.001" ?
-
-            cout << "qhull done! " << hull.vertexCount() << endl;
 
             vector<int> actualIndices;
             for (const orgQhull::QhullVertex& element: hull.vertexList()) {
@@ -160,13 +149,8 @@ void BestResultSet<UserData>::trim() {
             for (const auto& ind: actualIndices) {
                 hullPoints.insert(ind);
             }
-            cout << "recorded hull points: " << hullPoints.size() << endl;
-            cout << actualIndices << endl;
-            cout << dataCoordinatesIndices.size() << ", " << actualIndices.size() << endl;
             removeIndices(dataCoordinatesIndices, actualIndices);
-            cout << "indices cleared: " << dataCoordinatesIndices.size() << endl;
             if (dataCoordinatesIndices.size() < dimensions + 2) {
-                cout << "Aborting trimming: all of the points seem important!" << endl;
                 return; // just abort the whole trimming: all of the data points are important!
             }
 
@@ -178,7 +162,17 @@ void BestResultSet<UserData>::trim() {
         }
         data.swap(newData);
     } catch (const std::exception &e) {
-        cerr << "QHull crashed! No trimming will be performed: " << e.what() << endl;
+        string what = e.what();
+        if (what.empty()) {
+            cerr << "QHull crashed with unknown exception! No trimming will be performed." << endl;
+        } else {
+            auto whatLines = split(what, '\n');
+            if (whatLines.size() > 1) {
+                cerr << "QHull crashed! No trimming will be performed: " << whatLines[0] << "... (" << (whatLines.size() - 1) << " more lines)" << endl;
+            } else {
+                cerr << "QHull crashed! No trimming will be performed: " << what << endl;
+            }
+        }
     } catch (...) {
         auto e = current_exception();
         cerr << "QHull crashed with unknown exception! No trimming will be performed." << endl;

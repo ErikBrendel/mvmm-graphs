@@ -71,17 +71,14 @@ vector<shared_ptr<BestResultSet<BrsUserData>>> analyzeDisagreements(
         ensure(graphs.size() == p.size(), "Pattern is the wrong size!")
     }
 
-    cout << "patterns are nice!" << endl;
     vector<shared_ptr<BestResultSet<BrsUserData>>> result;
     for (const auto& p: patterns) {
         // one dim for each graph that is used in the pattern + 1 for support
         auto patternDimensions = 1 + count_if(all(p), [](double v) { return !isnan(v); });
         result.push_back(make_shared<BestResultSet<BrsUserData>>(patternDimensions, resultSize));
     }
-    cout << "empty BRSs created!" << endl;
 
     ProgressDisplay::init("Analyzing node pairs", square((int) nodeSet.size()));
-    cout << "doing node pair loop on " << nodeSet.size() << " nodes!" << endl;
     rep_all_pairs(n1, n2, nodeSet.size()) {
         ProgressDisplay::update();
         analyzePair(nodeSet[n1], nodeSet[n2], graphs, patterns, result);
