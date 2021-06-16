@@ -12,11 +12,13 @@ void analyzePairSingleDirection(
         const vector<double>& supportValues,
         vector<shared_ptr<BestResultSet<BrsUserData>>>& results
 ) {
+    cout << "analyzing single pair direction" << endl;
     vector<double> normalizedCouplingValues;
     normalizedCouplingValues.reserve(graphs.size());
     for (const auto& g: graphs) {
         normalizedCouplingValues.push_back(g->getNormalizedCoupling(a, b));
     }
+    cout << "got coupling values" << endl;
     rep(p, patterns.size()) {
         vector<double> patternMatchScoreData;
         const auto& pattern = patterns[p];
@@ -25,18 +27,21 @@ void analyzePairSingleDirection(
                 patternMatchScoreData.push_back(abs(pattern[i] - normalizedCouplingValues[i]));
             }
         }
+        cout << "got patternMatchScoreData: " << patternMatchScoreData.size() << endl;
         double support = 1;
         rep(i, graphs.size()) {
             if (!isnan(pattern[i])) {
                 support = min(support, supportValues[i]);
             }
         }
+        cout << "got support: " << support << endl;
         if (support >= MIN_SUPPORT_VALUE) {
             // add support to data vectors
             patternMatchScoreData.push_back(-support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
             results[p]->add(patternMatchScoreData, {a, b, normalizedCouplingValues});
-        }
+            cout << "recorded result" << endl;
+        } else cout << "discarded result" << endl;
     }
 }
 
@@ -49,6 +54,7 @@ void analyzePair(
     if (startsWith(node1, node2) || startsWith(node2, node1)) {
         return; // ignore nodes that are in a parent-child relation
     }
+    cout << "not parent-child-related!" << endl;
     // for each view: how much support do we have for this node pair (minimum of both node support values)
     vector<double> supportValues;
     for (const auto& g: graphs) {
@@ -56,6 +62,7 @@ void analyzePair(
         auto supp2 = g->getNormalizedSupport(node2);
         supportValues.push_back(min(supp1, supp2));
     }
+    cout << "got supports" << endl;
     analyzePairSingleDirection(node1, node2, graphs, patterns, supportValues, results);
     analyzePairSingleDirection(node2, node1, graphs, patterns, supportValues, results);
 }

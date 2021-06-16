@@ -82,7 +82,7 @@ void SimilarityCouplingGraph::plaintextSave(ostream& out) {
     out << "Similarity" << endl;
     // one line per node: name, support, weights...
     rep(i, nodes.size()) {
-        if (i != 0) out << "\n";
+        if (i != 0) out << endl;
         out << nodes[i] << "," << support[nodes[i]];
         for (const auto& c: coords[nodes[i]]) {
             out << "," << c;
