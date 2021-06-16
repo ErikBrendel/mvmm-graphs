@@ -140,7 +140,7 @@ void removeIndices(std::vector<T>& listToModify, std::vector<I> indicesList) {
         indicesSet.insert(i);
     }
     std::cout << "indices set: " << indicesSet.size() << std::endl;
-    int backMovePointer = listToModify.size();
+    int backMovePointer = (int)listToModify.size() - 1;
     while (indicesSet.find(backMovePointer) != indicesSet.end()) {
         backMovePointer--;
     }
