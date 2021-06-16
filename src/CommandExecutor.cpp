@@ -207,10 +207,11 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             ensure(graphAmount >= 2, "At least two graphs are required!")
             ensure((args.size() - 3) % graphAmount == 0, "Argument amount does not match!")
             vector<shared_ptr<CouplingGraph>> graphs;
+            graphs.reserve(graphAmount);
             rep(i, graphAmount) {
                 graphs.push_back(dataStorage.getG(args[3 + i]));
             }
-            cout << "Got the graphs!" << endl;
+            cout << "Got the graphs: " << graphs.size()<< endl;
             vector<vector<double>> patterns;
             for (int p = 3 + graphAmount; p < args.size(); p += graphAmount) {
                 patterns.emplace_back();
@@ -218,7 +219,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
                     patterns.back().push_back(stod(args[p + i]));
                 }
             }
-            cout << "Got the patterns!" << endl;
+            cout << "Got the patterns: " << patterns.size() << endl;
             auto results = analyzeDisagreements(ns, graphs, patterns, resultSize);
             cout << "Got the result!" << endl;
 
