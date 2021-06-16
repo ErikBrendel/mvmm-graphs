@@ -49,7 +49,6 @@ void analyzePair(
     if (startsWith(node1, node2) || startsWith(node2, node1)) {
         return; // ignore nodes that are in a parent-child relation
     }
-    cout << "not parent-child-related!" << endl;
     // for each view: how much support do we have for this node pair (minimum of both node support values)
     vector<double> supportValues;
     for (const auto& g: graphs) {
@@ -57,7 +56,6 @@ void analyzePair(
         auto supp2 = g->getNormalizedSupport(node2);
         supportValues.push_back(min(supp1, supp2));
     }
-    cout << "got supports" << endl;
     analyzePairSingleDirection(node1, node2, graphs, patterns, supportValues, results);
     analyzePairSingleDirection(node2, node1, graphs, patterns, supportValues, results);
 }

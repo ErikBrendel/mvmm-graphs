@@ -96,7 +96,6 @@ void BestResultSet<UserData>::trim() {
         }
         cout << "dataCoordinatesIndices created: " << dataCoordinatesIndices.size() << endl;
 
-        vector<vector<double>> hullData;
         rep(_it, resultKeepSize) {
             cout << "Trimming loop: " << _it << endl;
             for (int d = (int)dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
@@ -113,7 +112,6 @@ void BestResultSet<UserData>::trim() {
                     for (auto& element : dataCoordinatesIndices) {
                         element.first.erase(element.first.begin() + d);
                     }
-                    hullData.clear();
                 }
             }
             int dimensions = dataCoordinatesIndices.front().first.size();
@@ -121,18 +119,19 @@ void BestResultSet<UserData>::trim() {
             if (dimensions < 2) {
                 return; // degenerate nodes? just don't trim...
             }
-            if (hullData.empty()) {
-                cout << "creating hull data" << endl;
-                // add fake points to limit the hull to our quadrant only
-                rep(_p, dimensions + 1) {
-                    vector<double> corner(dimensions, 1);
-                    hullData.push_back(corner);
-                }
-                for (const auto& [x, ind] : dataCoordinatesIndices) {
-                    hullData.push_back(x);
-                }
-                cout << "hull data created: " << hullData.size() << endl;
+            // do the hull
+            auto fakePointCount = dimensions + 1;
+            vector<double> pointData;
+            pointData.reserve(dimensions * (dataCoordinatesIndices.size() + dimensions + 1));
+            cout << "creating hull data" << endl;
+            // add dim+1 fake points to limit the hull to our quadrant only
+            rep(_p, dimensions + 1) {
+                rep(i, dimensions) pointData.push_back(1); // actual values are set later
             }
+            for (const auto& [x, ind] : dataCoordinatesIndices) {
+                rep(i, dimensions) pointData.push_back(x[i]);
+            }
+            cout << "hull data created: " << pointData.size() << " (" << (pointData.size() / dimensions) << ")" << endl;
             // update outer points
             vector<double> minValues(dimensions, 9999);
             for (const auto& [coords, ind]: dataCoordinatesIndices) {
@@ -140,22 +139,14 @@ void BestResultSet<UserData>::trim() {
                     minValues[d] = min(minValues[d], coords[d] + 0.000001);
                 }
             }
-            auto fakePointCount = dimensions + 1;
             rep(d, dimensions) {
-                hullData[d][d] = minValues[d];
+                // each of the outer points (d) gets one coordinate (d) updated to the min value
+                pointData[d * dimensions + d] = minValues[d];
             }
             cout << "updated outer points" << endl;
-            // do the hull
-            vector<double> pointData;
-            pointData.reserve(dimensions * hullData.size());
-            for (const auto& p: hullData) {
-                rep(d, dimensions) {
-                    pointData.push_back(p[d]);
-                }
-            }
             cout << "got pointData: " << pointData.size() << endl;
             //Qhull(const char *inputComment2, int pointDimension, int pointCount, const double *pointCoordinates, const char *qhullCommand2);
-            orgQhull::Qhull hull("", dimensions, hullData.size(), pointData.data(), ""); // qhull_options="Qs QJ0.001" ?
+            orgQhull::Qhull hull("", dimensions, (int)pointData.size() / dimensions, pointData.data(), ""); // qhull_options="Qs QJ0.001" ?
 
             cout << "qhull done! " << hull.vertexCount() << endl;
 
@@ -170,11 +161,12 @@ void BestResultSet<UserData>::trim() {
                 hullPoints.insert(ind);
             }
             cout << "recorded hull points: " << hullPoints.size() << endl;
+            cout << actualIndices << endl;
+            cout << dataCoordinatesIndices.size() << ", " << actualIndices.size() << endl;
             removeIndices(dataCoordinatesIndices, actualIndices);
-            rep(i, actualIndices.size()) actualIndices[i] += fakePointCount; // shift indices to properly operate in hullData array
-            removeIndices(hullData, actualIndices);
             cout << "indices cleared: " << dataCoordinatesIndices.size() << endl;
             if (dataCoordinatesIndices.size() < dimensions + 2) {
+                cout << "Aborting trimming: all of the points seem important!" << endl;
                 return; // just abort the whole trimming: all of the data points are important!
             }
 

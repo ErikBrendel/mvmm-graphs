@@ -139,6 +139,7 @@ void removeIndices(std::vector<T>& listToModify, std::vector<I> indicesList) {
     for (const auto& i: indicesList) {
         indicesSet.insert(i);
     }
+    std::cout << "indices set: " << indicesSet.size() << std::endl;
     int backMovePointer = listToModify.size();
     while (indicesSet.find(backMovePointer) != indicesSet.end()) {
         backMovePointer--;
@@ -154,5 +155,6 @@ void removeIndices(std::vector<T>& listToModify, std::vector<I> indicesList) {
         }
     }
     int resultLength = listToModify.size() - indicesList.size();
+    std::cout << "result length: " << resultLength << std::endl;
     listToModify.erase(listToModify.begin() + resultLength, listToModify.end()); // del list_to_modify[result_length:]
 }
