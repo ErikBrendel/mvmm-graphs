@@ -20,14 +20,10 @@ void analyzePairSingleDirection(
     rep(p, patterns.size()) {
         vector<double> patternMatchScoreData;
         const auto& pattern = patterns[p];
-        rep(i, graphs.size()) {
-            if (!isnan(pattern[i])) {
-                patternMatchScoreData.push_back(abs(pattern[i] - normalizedCouplingValues[i]));
-            }
-        }
         double support = 1;
         rep(i, graphs.size()) {
             if (!isnan(pattern[i])) {
+                patternMatchScoreData.push_back(abs(pattern[i] - normalizedCouplingValues[i]));
                 support = min(support, supportValues[i]);
             }
         }
@@ -36,6 +32,7 @@ void analyzePairSingleDirection(
             patternMatchScoreData.push_back(-support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
             results[p]->add(patternMatchScoreData, {a, b, normalizedCouplingValues});
+            normalizedCouplingValues.pop_back(); // remove support again for the next one
         }
     }
 }
