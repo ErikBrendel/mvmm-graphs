@@ -85,16 +85,20 @@ void BestResultSet<UserData>::trim() {
     if (data.size() < resultKeepSize || data.size() < 10) return;
 
     try {
+        cout << "Trying to trim!" << endl;
         shuffle(all(data), my_brs_random_engine);
+        cout << "shuffled!" << endl;
         unordered_set<int> hullPoints;
         vector<pair<vector<double>, int>> dataCoordinatesIndices;
         dataCoordinatesIndices.reserve(data.size());
         rep(ind, data.size()) {
             dataCoordinatesIndices.emplace_back(data[ind].first, ind);
         }
+        cout << "dataCoordinatesIndices created: " << dataCoordinatesIndices.size() << endl;
 
         vector<vector<double>> hullData;
         rep(_it, resultKeepSize) {
+            cout << "Trimming loop: " << _it << endl;
             for (int d = (int)dataCoordinatesIndices.front().first.size() - 1; d >= 0; --d) { // eliminate degenerate dimensions
                 auto referenceValue = dataCoordinatesIndices.front().first[d];
                 bool allValuesAreClose = true;
@@ -113,10 +117,12 @@ void BestResultSet<UserData>::trim() {
                 }
             }
             int dimensions = dataCoordinatesIndices.front().first.size();
+            cout << "dimensions: " << dimensions << endl;
             if (dimensions < 2) {
                 return; // degenerate nodes? just don't trim...
             }
             if (hullData.empty()) {
+                cout << "creating hull data" << endl;
                 // add fake points to limit the hull to our quadrant only
                 rep(_p, dimensions + 1) {
                     vector<double> corner(dimensions, 1);
@@ -125,6 +131,7 @@ void BestResultSet<UserData>::trim() {
                 for (const auto& [x, ind] : dataCoordinatesIndices) {
                     hullData.push_back(x);
                 }
+                cout << "hull data created: " << hullData.size() << endl;
             }
             // update outer points
             vector<double> minValues(dimensions, 9999);
@@ -137,6 +144,7 @@ void BestResultSet<UserData>::trim() {
             rep(d, dimensions) {
                 hullData[d][d] = minValues[d];
             }
+            cout << "updated outer points" << endl;
             // do the hull
             vector<double> pointData;
             pointData.reserve(dimensions * hullData.size());
@@ -145,8 +153,11 @@ void BestResultSet<UserData>::trim() {
                     pointData.push_back(p[d]);
                 }
             }
+            cout << "got pointData: " << pointData.size() << endl;
             //Qhull(const char *inputComment2, int pointDimension, int pointCount, const double *pointCoordinates, const char *qhullCommand2);
             orgQhull::Qhull hull("", dimensions, hullData.size(), pointData.data(), ""); // qhull_options="Qs QJ0.001" ?
+
+            cout << "qhull done! " << hull.vertexCount() << endl;
 
             vector<int> actualIndices;
             for (const orgQhull::QhullVertex& element: hull.vertexList()) {
@@ -158,9 +169,11 @@ void BestResultSet<UserData>::trim() {
             for (const auto& ind: actualIndices) {
                 hullPoints.insert(ind);
             }
+            cout << "recorded hull points: " << hullPoints.size() << endl;
             removeIndices(dataCoordinatesIndices, actualIndices);
             rep(i, actualIndices.size()) actualIndices[i] += fakePointCount; // shift indices to properly operate in hullData array
             removeIndices(hullData, actualIndices);
+            cout << "indices cleared: " << dataCoordinatesIndices.size() << endl;
             if (dataCoordinatesIndices.size() < dimensions + 2) {
                 return; // just abort the whole trimming: all of the data points are important!
             }
