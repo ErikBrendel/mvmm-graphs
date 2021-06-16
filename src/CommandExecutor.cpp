@@ -211,7 +211,6 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             rep(i, graphAmount) {
                 graphs.push_back(dataStorage.getG(args[3 + i]));
             }
-            cout << "Got the graphs: " << graphs.size()<< endl;
             vector<vector<double>> patterns;
             for (int p = 3 + graphAmount; p < args.size(); p += graphAmount) {
                 patterns.emplace_back();
@@ -219,9 +218,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
                     patterns.back().push_back(stod(args[p + i]));
                 }
             }
-            cout << "Got the patterns: " << patterns.size() << endl;
             auto results = analyzeDisagreements(ns, graphs, patterns, resultSize);
-            cout << "Got the result!" << endl;
 
             cout << RESULT;
             bool first = true;
