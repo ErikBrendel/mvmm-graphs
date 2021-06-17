@@ -85,9 +85,9 @@ vector<shared_ptr<BestResultSet<BrsUserData>>> analyzeDisagreements(
     ProgressDisplay::init("Trimming result sets", (int)result.size());
     ProgressDisplay::showImmediately();
 
-    const auto rs = result.size();
+    auto rs = result.size();
 
-    #pragma omp parallel for default(none) shared(result)
+    #pragma omp parallel for default(none) shared(rs, result)
     rep(r, rs) {
         result[r]->trimSampling();
         ProgressDisplay::update();
