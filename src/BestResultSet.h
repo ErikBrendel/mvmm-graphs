@@ -9,6 +9,7 @@
 #include "util.h"
 #include "ProgressDisplay.h"
 #include "timsort.hpp"
+#include "radixsort.cpp"
 
 using namespace std;
 
@@ -64,13 +65,17 @@ void BestResultSet<UserData>::add(const vector<double>& coords, const UserData& 
 
 template<typename UserData>
 vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const vector<double>& dimWeights, int resultSizeFactor) {
-    gfx::timsort(all(data), [&](const pair<vector<double>, UserData>& a, const pair<vector<double>, UserData>& b) {
+    radix_sort<typename vector<pair<vector<double>, UserData>>::iterator, pair<vector<double>, UserData>>(all(data), [&](const pair<vector<double>, UserData>& a) {
         double agg = 0;
         rep(d, dimensionCount) {
-            agg += dimWeights[d] * (a.first[d] - b.first[d]);
+            agg += dimWeights[d] * a.first[d];
         }
-        return agg < 0;
+        // agg *= -1; // to accommodate for pottis descending sorting radix method
+        return *((unsigned long *) &agg);
     });
+    rep(i, data.size()) {
+        if (i % 10 == 0) cout << data[i].first << endl;
+    }
     vector<pair<vector<double>, UserData>> result;
     auto resultSize = resultKeepSize * resultSizeFactor;
     result.reserve(resultSize);
