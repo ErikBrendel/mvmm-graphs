@@ -83,9 +83,10 @@ vector<shared_ptr<BestResultSet<BrsUserData>>> analyzeDisagreements(
     ProgressDisplay::close();
 
     ProgressDisplay::init("Trimming result sets", (int)result.size());
+    ProgressDisplay::showImmediately();
     for (auto& r: result) {
         ProgressDisplay::update();
-        r->trim();
+        r->trimSampling();
     }
     ProgressDisplay::close();
 

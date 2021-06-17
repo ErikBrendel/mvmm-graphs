@@ -10,6 +10,11 @@ void ProgressDisplay::init(const string& description, int maximum) {
     ProgressDisplay::lastShownUpdate = chrono::steady_clock::now();
 }
 
+void ProgressDisplay::showImmediately() {
+    hasPrintedOnce = true;
+    _printUpdateMaybe(true);
+}
+
 void ProgressDisplay::update(int current, int maximum) {
     ProgressDisplay::current = current;
     ProgressDisplay::maximum = maximum;
@@ -22,6 +27,7 @@ void ProgressDisplay::update(int current) {
 }
 
 void ProgressDisplay::update() {
+    if (current >= maximum) return;
     ProgressDisplay::current++;
     _printUpdateMaybe();
 }

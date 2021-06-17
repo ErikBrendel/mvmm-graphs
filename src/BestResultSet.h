@@ -3,8 +3,12 @@
 #include <unordered_set>
 #include <libqhullcpp/Qhull.h>
 #include <libqhullcpp/QhullVertex.h>
+#include <iomanip>
+#include <sstream>
 
 #include "util.h"
+#include "ProgressDisplay.h"
+#include "timsort.hpp"
 
 using namespace std;
 
@@ -28,10 +32,11 @@ public:
     void add(const pair<vector<double>, UserData>& newData);
     void add(const vector<double>& coords, const UserData& userData);
 
-    vector<pair<vector<double>, UserData>> getBest(const vector<double>& dimWeights);
+    vector<pair<vector<double>, UserData>> getBest(const vector<double>& dimWeights, int resultSizeFactor = 1);
     const vector<pair<vector<double>, UserData>>& getAllData() const;
 
-    void trim();
+    void trimConvexHulls();
+    void trimSampling();
 };
 
 template<typename UserData>
@@ -58,8 +63,8 @@ void BestResultSet<UserData>::add(const vector<double>& coords, const UserData& 
 }
 
 template<typename UserData>
-vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const vector<double>& dimWeights) {
-    sort(all(data), [&](const pair<vector<double>, UserData>& a, const pair<vector<double>, UserData>& b) {
+vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const vector<double>& dimWeights, int resultSizeFactor) {
+    gfx::timsort(all(data), [&](const pair<vector<double>, UserData>& a, const pair<vector<double>, UserData>& b) {
         double agg = 0;
         rep(d, dimensionCount) {
             agg += dimWeights[d] * (a.first[d] - b.first[d]);
@@ -67,8 +72,9 @@ vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const ve
         return agg < 0;
     });
     vector<pair<vector<double>, UserData>> result;
-    result.reserve(resultKeepSize);
-    rep(i, resultKeepSize) {
+    auto resultSize = resultKeepSize * resultSizeFactor;
+    result.reserve(resultSize);
+    rep(i, resultSize) {
         result.push_back(data[i]);
     }
     return result;
@@ -81,7 +87,7 @@ const vector<pair<vector<double>, UserData>>& BestResultSet<UserData>::getAllDat
 
 
 template<typename UserData>
-void BestResultSet<UserData>::trim() {
+void BestResultSet<UserData>::trimConvexHulls() {
     if (data.size() < resultKeepSize || data.size() < 10) return;
 
     try {
@@ -179,3 +185,24 @@ void BestResultSet<UserData>::trim() {
     }
 }
 
+template<typename UserData>
+void BestResultSet<UserData>::trimSampling() {
+    if (data.size() < resultKeepSize || data.size() < 10) return;
+
+    unordered_set<pair<vector<double>, UserData>> sampledPoints;
+    vector<vector<double>> allWeights = generateOneDistributions<double>(dimensionCount, 10);
+    ProgressDisplay::init("Trimming", (int)allWeights.size());
+    for (const auto& weights: allWeights) {
+        ProgressDisplay::update();
+        for (const auto& best: getBest(weights, 3)) {
+            sampledPoints.insert(best);
+        }
+    }
+    ProgressDisplay::close();
+
+    cout << "Reduced result size from " << data.size() << " to " << sampledPoints.size() << endl;
+    data.clear();
+    for (const auto& d: sampledPoints) {
+        data.push_back(d);
+    }
+}

@@ -73,21 +73,66 @@ inline void hash_combine(std::size_t& seed, const T& v) {
     seed ^= hasher(v) + 0x9e3779b9 + (seed<<6) + (seed>>2);
 }
 
-// from https://stackoverflow.com/a/32685618/4354423
-struct pair_hash {
-    template <class T1, class T2>
-    std::size_t operator () (const std::pair<T1,T2> &p) const {
-        auto h1 = std::hash<T1>{}(p.first);
-        auto h2 = std::hash<T2>{}(p.second);
 
-        // Mainly for demonstration purposes, i.e. works but is overly simple
-        // In the real world, use sth. like boost.hash_combine
+namespace std {
+// from https://stackoverflow.com/q/37007307/4354423
+template<typename T>
+struct hash<vector<T>> {
+    typedef vector<T> argument_type;
+    typedef std::size_t result_type;
+
+    result_type operator()(argument_type const& in) const {
+        size_t size = in.size();
+        size_t seed = 0;
+        for (size_t i = 0; i < size; i++)
+            //Combine the hash of the current vector with the hashes of the previous ones
+            hash_combine(seed, in[i]);
+        return seed;
+    }
+};
+
+// from https://stackoverflow.com/a/32685618/4354423
+template<class T1, class T2>
+struct hash<std::pair<T1, T2>> {
+    typedef std::pair<T1, T2> argument_type;
+    typedef std::size_t result_type;
+
+    result_type operator()(argument_type const& in) const {
+        auto h1 = std::hash<T1>{}(in.first);
+        auto h2 = std::hash<T2>{}(in.second);
         size_t seed = 0;
         hash_combine(seed, h1);
         hash_combine(seed, h2);
         return seed;
     }
 };
+
+// from https://stackoverflow.com/a/7115547/4354423
+template <typename ... TT>
+struct hash<std::tuple<TT...>> {
+    template<class Tuple, size_t Index = std::tuple_size<Tuple>::value - 1>
+    struct HashValueImpl {
+        static void apply(size_t& seed, Tuple const& tuple) {
+            HashValueImpl<Tuple, Index - 1>::apply(seed, tuple);
+            hash_combine(seed, std::get<Index>(tuple));
+        }
+    };
+
+    template<class Tuple>
+    struct HashValueImpl<Tuple, 0> {
+        static void apply(size_t& seed, Tuple const& tuple) {
+            hash_combine(seed, std::get<0>(tuple));
+        }
+    };
+
+    size_t operator()(std::tuple<TT...> const& tt) const {
+        size_t seed = 0;
+        HashValueImpl<std::tuple<TT...>>::apply(seed, tt);
+        return seed;
+    }
+};
+}
+
 
 
 #define startsWith(a, b) ((a).rfind((b), 0) == 0)
@@ -155,4 +200,33 @@ void removeIndices(std::vector<T>& listToModify, std::vector<I> indicesList) {
     }
     int resultLength = listToModify.size() - indicesList.size();
     listToModify.erase(listToModify.begin() + resultLength, listToModify.end()); // del list_to_modify[result_length:]
+}
+
+template <typename F>
+std::vector<std::vector<F>> generateOneDistributions(int dim, int precision = 10) {
+    // precision = how many steps between 0 and 1
+    F decrementStep = -1.0 / precision;
+    std::vector<std::vector<F>> allResults;
+    std::vector<F> result(dim, 0);
+
+    std::function<void(int, F)> fillFirst = [&](int digits, F totalValue) {
+        if (digits == 1) {
+            result[0] = totalValue;
+            allResults.push_back(result);
+        } else if (totalValue < 0.00001) {
+            rep(i, digits) {
+                result[i] = 0;
+            }
+            allResults.push_back(result);
+        } else {
+            for (F val = totalValue; val >= -0.000001; val += decrementStep) {
+                result[digits - 1] = val < 0 ? 0 : val;
+                fillFirst(digits - 1, totalValue - val);
+            }
+        }
+    };
+
+    fillFirst(dim, 1);
+
+    return allResults;
 }

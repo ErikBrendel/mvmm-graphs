@@ -11,7 +11,7 @@ class ResultCachedGraph : public CouplingGraph {
 private:
     shared_ptr<CouplingGraph> wrapped;
     unordered_map<string, double> supportCache;
-    unordered_map<pair<string, string>, double, pair_hash> couplingCache;
+    unordered_map<pair<string, string>, double> couplingCache;
 
 public:
     explicit ResultCachedGraph(const shared_ptr<CouplingGraph>& wrapped);

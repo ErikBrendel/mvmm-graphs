@@ -18,6 +18,7 @@ private:
     constexpr static const chrono::duration updateInterval = 200ms;
 public:
     static void init(const string& description, int maximum = 100);
+    static void showImmediately();
     static void update(int current, int maximum);
     static void update(int current);
     static void update();

@@ -26,6 +26,7 @@ add_executable(coupling_graphs
         src/ProgressDisplay.cpp
         src/BestResultSet.h
         src/disagreementAnalysis.cpp
+        src/timsort.hpp
         )
 
 
