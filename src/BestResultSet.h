@@ -65,17 +65,13 @@ void BestResultSet<UserData>::add(const vector<double>& coords, const UserData& 
 
 template<typename UserData>
 vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const vector<double>& dimWeights, int resultSizeFactor) {
-    radix_sort<typename vector<pair<vector<double>, UserData>>::iterator, pair<vector<double>, UserData>>(all(data), [&](const pair<vector<double>, UserData>& a) {
+    gfx::timsort(all(data), [&](const pair<vector<double>, UserData>& a, const pair<vector<double>, UserData>& b) {
         double agg = 0;
         rep(d, dimensionCount) {
-            agg += dimWeights[d] * a.first[d];
+            agg += dimWeights[d] * (a.first[d] - b.first[d]);
         }
-        // agg *= -1; // to accommodate for pottis descending sorting radix method
-        return *((unsigned long *) &agg);
+        return agg < 0;
     });
-    rep(i, data.size()) {
-        if (i % 10 == 0) cout << data[i].first << endl;
-    }
     vector<pair<vector<double>, UserData>> result;
     auto resultSize = resultKeepSize * resultSizeFactor;
     result.reserve(resultSize);
@@ -121,7 +117,7 @@ void BestResultSet<UserData>::trimConvexHulls() {
                     }
                 }
             }
-            int dimensions = dataCoordinatesIndices.front().first.size();
+            int dimensions = (int)dataCoordinatesIndices.front().first.size();
             if (dimensions < 2) {
                 return; // degenerate nodes? just don't trim...
             }
@@ -196,14 +192,14 @@ void BestResultSet<UserData>::trimSampling() {
 
     unordered_set<pair<vector<double>, UserData>> sampledPoints;
     vector<vector<double>> allWeights = generateOneDistributions<double>(dimensionCount, 10);
-    ProgressDisplay::init("Trimming", (int)allWeights.size());
+    //ProgressDisplay::init("Trimming", (int)allWeights.size());
     for (const auto& weights: allWeights) {
-        ProgressDisplay::update();
+        //ProgressDisplay::update();
         for (const auto& best: getBest(weights, 3)) {
             sampledPoints.insert(best);
         }
     }
-    ProgressDisplay::close();
+    //ProgressDisplay::close();
 
     cout << "Reduced result size from " << data.size() << " to " << sampledPoints.size() << endl;
     data.clear();
