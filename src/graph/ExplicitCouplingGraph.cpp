@@ -4,6 +4,7 @@
 #include <algorithm>
 
 #include "../ProgressDisplay.h"
+#include "../parallel/ParallelExplicitGraph.h"
 #include "../util.h"
 
 ExplicitCouplingGraph::ExplicitCouplingGraph(const string& name)
@@ -187,11 +188,8 @@ void ExplicitCouplingGraph::propagateDown(int layers, double weightFactor) {
 void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
 
     rep(iteration, iterations) {
-        vector<unordered_map<uint, double>> changesToApply;
-        changesToApply.resize(adj.size());
-
         ProgressDisplay::init("Collecting dilation info", node2i.size());
-        rep(node, node2i.size()) {
+        auto mapped = parallelMapNodes(adj, [&](AdjGraph& output, uint node){
             ProgressDisplay::update();
             vector<pair<uint, double>> connectionsAndWeights;
             for (const auto& [n2, w]: adj[node]) {
@@ -199,7 +197,7 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
                     connectionsAndWeights.emplace_back(n2, w * weightFactor);
                 }
             }
-            if (connectionsAndWeights.empty()) continue;
+            if (connectionsAndWeights.empty()) return;
             rep_all_pairs(i, j, connectionsAndWeights.size()) {
                 const auto& [c1, w1] = connectionsAndWeights[i];
                 const auto& [c2, w2] = connectionsAndWeights[j];
@@ -207,24 +205,17 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
                 uint a = c1;
                 uint b = c2;
                 if (a > b) swap(a, b);
-                auto existing = changesToApply[a].find(b);
-                if (existing != changesToApply[a].end()) {
+                auto existing = output[a].find(b);
+                if (existing != output[a].end()) {
                     existing->second += w;
                 } else {
-                    changesToApply[a][b] = w;
+                    output[a][b] = w;
                 }
             }
-        }
+        });
         ProgressDisplay::close();
 
-        ProgressDisplay::init("Applying changes", adj.size());
-        rep(n1, adj.size()) {
-            ProgressDisplay::update();
-            for (const auto& [n2, w]: changesToApply[n1]) {
-                addI(n1, n2, w);
-            }
-        }
-        ProgressDisplay::close();
+        parallelMergeGraphs(adj, mapped);
     }
 }
 

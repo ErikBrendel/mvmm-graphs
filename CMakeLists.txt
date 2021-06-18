@@ -28,6 +28,7 @@ add_executable(coupling_graphs
         src/disagreementAnalysis.cpp
         src/timsort.hpp
         src/radixsort.cpp
+        src/parallel/ParallelExplicitGraph.cpp
         )
 
 
