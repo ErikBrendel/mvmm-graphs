@@ -41,6 +41,7 @@ public:
     void plaintextSave(ostream& out) override;
     void plaintextLoad(istream& in) override;
     void printStatistics() override;
+    vector<tuple<double, string, string>> getMostLinkedNodePairs(int amount) override;
 
     const unordered_set<string>& getChildren(const string &node) override;
     double getNormalizedSupport(const string& node) override;

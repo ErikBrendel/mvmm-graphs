@@ -344,6 +344,28 @@ void ExplicitCouplingGraph::printStatistics() {
     cout << ", mean: " << mean(nodeSupports) << endl;
 }
 
+vector<tuple<double, string, string>> ExplicitCouplingGraph::getMostLinkedNodePairs(int amount) {
+    if (adj.size() < 2) {
+        return {};
+    }
+    vector<tuple<double, string, string>> sortedData;
+    rep(n1, adj.size()) {
+        const auto& a = i2node[n1];
+        for (const auto& [n2, w]: adj[n1]) {
+            const auto& b = i2node[n2];
+            sortedData.emplace_back(w, a, b);
+            if (sortedData.size() > amount) {
+                sort(all(sortedData), greater<>());
+                sortedData.pop_back();
+            }
+        }
+    }
+    while (sortedData.size() > amount) {
+        sortedData.pop_back();
+    }
+    return sortedData;
+}
+
 const unordered_set<string>& ExplicitCouplingGraph::getChildren(const string& node) {
     return NodeSetCouplingGraph::getChildren(node);
 }

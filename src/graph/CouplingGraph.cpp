@@ -75,6 +75,29 @@ void CouplingGraph::plaintextLoad(istream& in) {
     throw runtime_error("Cannot load this kind of graph!");
 }
 
+vector<tuple<double, string, string>> CouplingGraph::getMostLinkedNodePairs(int amount) {
+    auto nodeSet = getNodeSet();
+    if (nodeSet.size() < 2) {
+        return {};
+    }
+    vector<tuple<double, string, string>> sortedData;
+    rep_all_pairs(i, j, nodeSet.size()) {
+            const auto& a = nodeSet[i];
+            const auto& b = nodeSet[j];
+            sortedData.emplace_back(max(getNormalizedCoupling(a, b), getNormalizedCoupling(b, a)), a, b);
+            if (sortedData.size() > amount) {
+                sort(all(sortedData), [](const tuple<double, string, string>& e1, const tuple<double, string, string>& e2){
+                    return get<0>(e1) > get<0>(e2);
+                });
+                sortedData.pop_back();
+            }
+        }
+    while (sortedData.size() > amount) {
+        sortedData.pop_back();
+    }
+    return sortedData;
+}
+
 double CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet,
                                                 const vector<string>& allNodes) {
 

@@ -92,6 +92,15 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
         {"printStatistics", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.getG(args[0])->printStatistics();
         }},
+        {"getMostLinkedNodePairs", "graphId amount", [](DataStorage& dataStorage, const vector<string>& args) {
+            auto result = dataStorage.getG(args[0])->getMostLinkedNodePairs(stoi(args[1]));
+            cout << RESULT;
+            rep(i, result.size()) {
+                if (i > 0) cout << "|";
+                cout << get<0>(result[i]) << ";" << get<1>(result[i]) << ";" << get<2>(result[i]);
+            }
+            cout << endl;
+        }},
 
         {"saveNodeSet", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             int result = dataStorage.addNodeSet(make_shared<vector<string>>(dataStorage.getG(args[0])->getNodeSet()));
@@ -266,6 +275,10 @@ void CommandExecutor::tryExecuteCommand(const string& command) {
 
 void CommandExecutor::executeCommand(const string& command) {
     if (command.empty()) return;
+    if (command[0] == '#') {
+        cout << "Ignoring commented-out command: " << command << endl;
+        return;
+    }
     auto parts = split(command, '|');
     if (parts.empty()) return;
     string cmd = parts[0];

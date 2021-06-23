@@ -27,6 +27,7 @@ public:
     virtual void plaintextLoad(istream& in);
 
     virtual void printStatistics() = 0;
+    virtual vector<tuple<double, string, string>> getMostLinkedNodePairs(int amount);
 
     double howWellPredictsMissingNode(const vector<string>& nodeSet, const string& nodeMissingFromSet, const vector<string>& allNodes);
 
