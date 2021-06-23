@@ -29,7 +29,7 @@ add_executable(coupling_graphs
         src/timsort.hpp
         src/radixsort.cpp
         src/parallel/ParallelExplicitGraph.cpp
-        src/parallel/ParallelJobsExecutor.h
+        src/parallel/ParallelJobsExecutor.h src/parallel/ParallelJobsExecutor.cpp
         )
 
 

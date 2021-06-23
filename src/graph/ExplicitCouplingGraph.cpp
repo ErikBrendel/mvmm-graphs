@@ -204,12 +204,18 @@ void ExplicitCouplingGraph::dilate(int iterations, double weightFactor) {
                 double w = min(w1, w2);
                 uint a = c1;
                 uint b = c2;
-                if (a > b) swap(a, b);
+                // if (a > b) swap(a, b);
                 auto existing = output[a].find(b);
                 if (existing != output[a].end()) {
                     existing->second += w;
                 } else {
                     output[a][b] = w;
+                }
+                auto existing2 = output[b].find(a);
+                if (existing2 != output[b].end()) {
+                    existing->second += w;
+                } else {
+                    output[b][a] = w;
                 }
             }
         });

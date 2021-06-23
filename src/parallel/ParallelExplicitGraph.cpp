@@ -6,8 +6,8 @@
 
 vector<shared_ptr<AdjGraph>> parallelMapNodes(const AdjGraph& source, function<void(AdjGraph&, uint)> mapper) {
     int n = (int)source.size();
-    ParallelJobsExecutor<AdjGraph> executor(n);
-    return executor.executeParallel([&]() {
+    ParallelJobsExecutor executor(n);
+    return executor.executeParallel<AdjGraph>([&]() {
         return make_shared<AdjGraph>(n);
     }, [&](AdjGraph& res, int node) {
         mapper(res, node);
@@ -33,14 +33,14 @@ void addI(AdjGraph& target, uint a, uint b, double delta) {
 
 void parallelMergeGraphs(AdjGraph& target, const vector<shared_ptr<AdjGraph>>& changesToApply) {
     int n = (int)target.size();
-    ParallelJobsExecutor<void> executor(n);
+    ParallelJobsExecutor executor(n);
     executor.executeParallel([&](int n1) {
         for (const auto& changePtr: changesToApply) {
             AdjGraph& change = *changePtr;
             for (const auto& [n2, w]: change[n1]) {
                 if (n1 != n2) {
-                    addI(target, n1, n2, w);
-                    addI(target, n2, n1, w);
+                    addI(target, n1, n2, w); // can only operate on the node we are working on!
+                    // addI(target, n2, n1, w); // data needs to be correctly bi-directed already
                 }
             }
         }
