@@ -42,7 +42,7 @@ double ExplicitCouplingGraph::get(const string& a, const string& b) {
     if (ai == node2i.end()) return 0;
     auto bi = node2i.find(b);
     if (bi == node2i.end()) return 0;
-    auto& edgeList = adj[ai->second];
+    const auto& edgeList = adj[ai->second];
     auto conn = edgeList.find(bi->second);
     if (conn == edgeList.end()) {
         return 0;
@@ -56,9 +56,9 @@ double ExplicitCouplingGraph::getDirectCoupling(const string& a, const string& b
 }
 
 vector<string> ExplicitCouplingGraph::getDirectlyCoupled(const string& node) {
-    auto i = node2i.find(node);
+    const auto i = node2i.find(node);
     if (i == node2i.end()) return {};
-    auto edgeList = adj[i->second];
+    const auto& edgeList = adj[i->second];
     vector<string> result;
     result.reserve(edgeList.size());
     for (const auto& entry: edgeList) {

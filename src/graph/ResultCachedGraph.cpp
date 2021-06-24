@@ -19,14 +19,21 @@ double ResultCachedGraph::getNormalizedSupport(const string& node) {
 }
 
 double ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b) {
-    pair<string, string> key = make_pair(a, b);
-    auto found = couplingCache.find(key);
-    if (found == couplingCache.end()) {
+    auto foundA = couplingCache.find(a);
+    if (foundA == couplingCache.end()) {
         double coupling = wrapped->getNormalizedCoupling(a, b);
-        couplingCache[key] = coupling;
+        couplingCache[a][b] = coupling;
         return coupling;
     } else {
-        return found->second;
+        auto& aMap = foundA->second;
+        auto foundB = aMap.find(b);
+        if (foundB == aMap.end()) {
+            double coupling = wrapped->getNormalizedCoupling(a, b);
+            aMap[b] = coupling;
+            return coupling;
+        } else {
+            return foundB->second;
+        }
     }
 }
 
