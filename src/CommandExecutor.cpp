@@ -180,6 +180,22 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             }
             similarityGraph->addNode(args[1], coords, stof(args.back()));
         }},
+        {"similarityGetNode", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& similarityGraph = dynamic_pointer_cast<SimilarityCouplingGraph>(graph);
+            ensure(similarityGraph != nullptr, "Can only be used on similarity graphs!")
+            auto support = similarityGraph->getSupport(args[1]);
+            auto coords = similarityGraph->getCoords(args[1]);
+            if (support == 0 && coords.empty()) {
+                cout << RESULT << endl;
+            } else {
+                cout << RESULT << support;
+                for (const auto& c: coords) {
+                    cout << "|" << c;
+                }
+                cout << endl;
+            }
+        }},
         {"combinedSetWeights", "graphId weights...", [](DataStorage& dataStorage, const vector<string>& args) {
             const auto& graph = dataStorage.getG(args[0]);
             const auto& combinedGraph = dynamic_pointer_cast<WeightCombinedGraph>(graph);

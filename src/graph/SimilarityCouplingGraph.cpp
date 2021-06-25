@@ -24,6 +24,15 @@ double SimilarityCouplingGraph::getSupport(const string& node) {
     return found == support.end() ? 0 : found->second;
 }
 
+vector<double> SimilarityCouplingGraph::getCoords(const string& node) {
+    auto found = coords.find(node);
+    if (found == coords.end()) {
+        return {};
+    } else {
+        return found->second;
+    }
+}
+
 double SimilarityCouplingGraph::getAbsoluteSupport(const string& node) {
     return getSupport(node);
 }

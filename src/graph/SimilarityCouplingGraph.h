@@ -21,6 +21,7 @@ public:
     const vector<string> & getNodeSet() override;
     void addNode(const string& node, const vector<double>& coords, double support);
     double getSupport(const string& node);
+    vector<double> getCoords(const string& node);
     double getAbsoluteSupport(const string &node) override;
     double getNormalizedCoupling(const string &a, const string &b) override;
 
