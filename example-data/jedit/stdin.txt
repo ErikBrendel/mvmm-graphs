@@ -1,0 +1,6 @@
+load|jedit|structural|example-data/
+printStatistics|0
+explicitPropagateDown|0|2|0.2
+explicitDilate|0|1|0.2
+printStatistics|0
+getMostLinkedNodePairs|0|10
