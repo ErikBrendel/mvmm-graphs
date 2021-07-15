@@ -107,6 +107,30 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             }
             cout << endl;
         }},
+        {"getCouplingCandidatesAndWeights", "graphId node maximumResultCount?", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const string& targetNode = args[1];
+            auto nodes = graph->getCouplingCandidates(targetNode, false);
+            if (nodes.empty()) nodes = graph->getNodeSet();
+            
+            vector<pair<string, double>> weightedCandidates;
+            weightedCandidates.reserve(nodes.size());
+            for (const auto& node: nodes) {
+                weightedCandidates.emplace_back(node, graph->getNormalizedCoupling(targetNode, node));
+            }
+            sort(all(weightedCandidates), [](const pair<string, double>& a, const pair<string, double>& b) {
+                return a.second > b.second;
+            });
+
+            unsigned int outputCount = args.size() > 2 ? min(stoul(args[2]), nodes.size()) : nodes.size();
+            
+            cout << RESULT;
+            rep(i, outputCount) {
+                if (i > 0) cout << "|";
+                cout << weightedCandidates[i].first << ";" << weightedCandidates[i].second;
+            }
+            cout << endl;
+        }},
         {"printStatistics", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.getG(args[0])->printStatistics();
         }},
@@ -326,6 +350,8 @@ void CommandExecutor::executeCommand(const string& command) {
             bool exact = true;
             for (const auto& word: split(argumentPattern, " ")) {
                 if (word.size() > 3 && word.compare(word.size() - 3, 3, "...") == 0) {
+                    exact = false;
+                } else if (word.size() > 1 && word.compare(word.size() - 1, 1, "?") == 0) {
                     exact = false;
                 } else {
                     minArgs++;
