@@ -21,6 +21,10 @@ const vector<string>& CouplingGraph::getNodeSet() {
     return emptyNodeSet;
 }
 
+vector<string> CouplingGraph::getCouplingCandidates(const string& node, bool addPredecessors) {
+    return emptyNodeSet;
+}
+
 string CouplingGraph::getParent(const string& node) {
     if (node.length() <= 1) {
         return "";

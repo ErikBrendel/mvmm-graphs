@@ -19,6 +19,7 @@ public:
     explicit ExplicitCouplingGraph(const string& name);
 
     const vector<string>& getNodeSet() override;
+    vector<string> getCouplingCandidates(const string& node, bool addPredecessors) override;
     void add(const string& a, const string& b, double delta);
     double get(const string& a, const string& b);
     double getDirectCoupling(const string& a, const string& b) override;

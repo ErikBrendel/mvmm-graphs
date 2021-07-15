@@ -22,6 +22,7 @@ public:
     void setWeights(const vector<double>& newWeights);
 
     const vector<string> & getNodeSet() override;
+    vector<string> getCouplingCandidates(const string& node, bool addPredecessors) override;
     double getNormalizedSupport(const string &node) override;
     double getNormalizedCoupling(const string &a, const string &b) override;
     void printStatistics() override;

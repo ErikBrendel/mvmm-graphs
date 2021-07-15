@@ -13,13 +13,13 @@ private:
 public:
 
     virtual const vector<string>& getNodeSet() = 0;
+    virtual vector<string> getCouplingCandidates(const string& node, bool addPredecessors);
     virtual const unordered_set <string>& getChildren(const string& node) = 0;
     virtual vector<string> getDirectlyCoupled(const string& node) = 0;
     virtual double getDirectCoupling(const string& a, const string& b) = 0;
 
     virtual double getNormalizedCoupling(const string& a, const string& b);
 private:
-    vector<string> getCouplingCandidates(const string& node, bool addPredecessors = false);
     vector<string> getSelfAndDescendants(const string& node);
     void getSelfAndDescendentsRec(const string& node, vector<string>& result);
     double getDirectMultiCoupling(const string& a, const vector<string>& others);

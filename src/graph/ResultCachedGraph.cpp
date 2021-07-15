@@ -7,6 +7,10 @@ const vector<string>& ResultCachedGraph::getNodeSet() {
     return wrapped->getNodeSet();
 }
 
+vector<string> ResultCachedGraph::getCouplingCandidates(const string& node, bool addPredecessors) {
+    return wrapped->getCouplingCandidates(node, addPredecessors);
+}
+
 double ResultCachedGraph::getNormalizedSupport(const string& node) {
     auto found = supportCache.find(node);
     if (found == supportCache.end()) {

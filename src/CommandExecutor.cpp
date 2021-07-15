@@ -89,6 +89,24 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             }
             cout << endl;
         }},
+        {"getCouplingCandidates", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& nodes = dataStorage.getG(args[0])->getCouplingCandidates(args[1], false);
+            cout << RESULT;
+            rep(i, nodes.size()) {
+                if (i > 0) cout << "|";
+                cout << nodes[i];
+            }
+            cout << endl;
+        }},
+        {"getCouplingCandidatesWithPredecessors", "graphId node", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& nodes = dataStorage.getG(args[0])->getCouplingCandidates(args[1], true);
+            cout << RESULT;
+            rep(i, nodes.size()) {
+                if (i > 0) cout << "|";
+                cout << nodes[i];
+            }
+            cout << endl;
+        }},
         {"printStatistics", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
             dataStorage.getG(args[0])->printStatistics();
         }},

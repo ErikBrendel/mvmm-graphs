@@ -14,6 +14,10 @@ const vector<string>& ExplicitCouplingGraph::getNodeSet() {
     return i2node;
 }
 
+vector<string> ExplicitCouplingGraph::getCouplingCandidates(const string& node, bool addPredecessors) {
+    return NormalizeCouplingWithChildren::getCouplingCandidates(node, addPredecessors);
+}
+
 void ExplicitCouplingGraph::add(const string& a, const string& b, double delta) {
     if (a == b) return;
     addI(getNodeIndex(a), getNodeIndex(b), delta);

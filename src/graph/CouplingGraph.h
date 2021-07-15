@@ -17,6 +17,7 @@ public:
     [[nodiscard]] const string& getName() const;
 
     virtual const vector<string>& getNodeSet();
+    virtual vector<string> getCouplingCandidates(const string& node, bool addPredecessors);
     virtual double getNormalizedSupport(const string& node) = 0;
     virtual double getNormalizedCoupling(const string& a, const string& b) = 0;
 

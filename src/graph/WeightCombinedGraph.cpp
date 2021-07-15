@@ -36,6 +36,20 @@ const vector<string>& WeightCombinedGraph::getNodeSet() {
     return combinedNodeSet;
 }
 
+vector<string> WeightCombinedGraph::getCouplingCandidates(const string& node, bool addPredecessors) {
+    unordered_set<string> allCandidates;
+    for (const auto& g: graphs) {
+        vector<string> candidates = g->getCouplingCandidates(node, addPredecessors);
+        if (candidates.empty()) {
+            return {};
+        }
+        for (const auto& candidate: candidates) {
+            allCandidates.insert(candidate);
+        }
+    }
+    return vector<string>(all(allCandidates));
+}
+
 double WeightCombinedGraph::getNormalizedSupport(const string& node) {
     double result = 0;
     rep(i, graphs.size()) {
