@@ -107,6 +107,7 @@ double CouplingGraph::howWellPredictsMissingNode(const vector<string>& nodeSet, 
 
     vector<string> couplingSortedNodes(allNodes);
 
+    // TODO calculate k rank hit could be done in linear time - better?
     sort(all(couplingSortedNodes), [&](const string& a, const string& b) {
         double couplingSumA = 0;
         double couplingSumB = 0;

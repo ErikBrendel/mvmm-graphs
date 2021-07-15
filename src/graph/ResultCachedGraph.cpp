@@ -12,6 +12,7 @@ vector<string> ResultCachedGraph::getCouplingCandidates(const string& node, bool
 }
 
 double ResultCachedGraph::getNormalizedSupport(const string& node) {
+    // TODO add hints to "if" what is more likely for the cpu pipeline
     auto found = supportCache.find(node);
     if (found == supportCache.end()) {
         double support = wrapped->getNormalizedSupport(node);
@@ -23,6 +24,7 @@ double ResultCachedGraph::getNormalizedSupport(const string& node) {
 }
 
 double ResultCachedGraph::getNormalizedCoupling(const string& a, const string& b) {
+    // TODO add hints to "if" what is more likely for the cpu pipeline
     auto foundA = couplingCache.find(a);
     if (foundA == couplingCache.end()) {
         double coupling = wrapped->getNormalizedCoupling(a, b);
