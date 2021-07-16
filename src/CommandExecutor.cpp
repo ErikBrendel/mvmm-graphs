@@ -126,6 +126,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             
             cout << RESULT;
             rep(i, outputCount) {
+                if (weightedCandidates[i].second <= 0) break; // stop output if we reached 0 coupling weight
                 if (i > 0) cout << "|";
                 cout << weightedCandidates[i].first << ";" << weightedCandidates[i].second;
             }
