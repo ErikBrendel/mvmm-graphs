@@ -89,7 +89,9 @@ vector<shared_ptr<BestResultSet<BrsUserData>>> analyzeDisagreements(
 
     #pragma omp parallel for default(none) shared(rs, result)
     rep(r, rs) {
-        result[r]->trimSampling();
+        // result[r]->trimSampling();
+        result[r]->trimMultiSampling();
+        // result[r]->trimConvexHulls();
         ProgressDisplay::update();
     }
     ProgressDisplay::close();

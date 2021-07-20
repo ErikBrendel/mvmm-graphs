@@ -37,7 +37,9 @@ public:
     const vector<pair<vector<double>, UserData>>& getAllData() const;
 
     void trimConvexHulls();
+    void trimSampling(int precision, int resultSizeFactor);
     void trimSampling();
+    void trimMultiSampling();
 };
 
 template<typename UserData>
@@ -187,15 +189,15 @@ void BestResultSet<UserData>::trimConvexHulls() {
 }
 
 template<typename UserData>
-void BestResultSet<UserData>::trimSampling() {
+void BestResultSet<UserData>::trimSampling(int precision, int resultSizeFactor) {
     if (data.size() < resultKeepSize || data.size() < 10) return;
 
     unordered_set<pair<vector<double>, UserData>> sampledPoints;
-    vector<vector<double>> allWeights = generateOneDistributions<double>(dimensionCount, 10);
+    vector<vector<double>> allWeights = generateOneDistributions<double>(dimensionCount, precision);
     //ProgressDisplay::init("Trimming", (int)allWeights.size());
     for (const auto& weights: allWeights) {
         //ProgressDisplay::update();
-        for (const auto& best: getBest(weights, 3)) {
+        for (const auto& best: getBest(weights, resultSizeFactor)) {
             sampledPoints.insert(best);
         }
     }
@@ -206,4 +208,15 @@ void BestResultSet<UserData>::trimSampling() {
     for (const auto& d: sampledPoints) {
         data.push_back(d);
     }
+}
+
+template<typename UserData>
+void BestResultSet<UserData>::trimSampling() {
+    trimSampling(dimensionCount * 2, 3);
+}
+
+template<typename UserData>
+void BestResultSet<UserData>::trimMultiSampling() {
+    trimSampling(dimensionCount, 20);
+    trimSampling(dimensionCount * 2, 3);
 }
