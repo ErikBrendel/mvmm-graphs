@@ -7,7 +7,7 @@
 
 using namespace std;
 
-SimilarityCouplingGraph::SimilarityCouplingGraph(const string& name) : CouplingGraph(name) {}
+SimilarityCouplingGraph::SimilarityCouplingGraph(const string& name) : NodeSetCouplingGraph(name) {}
 
 const vector<string>& SimilarityCouplingGraph::getNodeSet() {
     return nodes;
@@ -17,20 +17,45 @@ void SimilarityCouplingGraph::addNode(const string& node, const vector<double>& 
     nodes.push_back(node);
     this->coords[node] = coords;
     this->support[node] = support;
+    onNodeSetChanged();
 }
 
 double SimilarityCouplingGraph::getSupport(const string& node) {
     auto found = support.find(node);
-    return found == support.end() ? 0 : found->second;
-}
-
-vector<double> SimilarityCouplingGraph::getCoords(const string& node) {
-    auto found = coords.find(node);
-    if (found == coords.end()) {
-        return {};
-    } else {
+    if (found != support.end()) {
         return found->second;
     }
+    const auto& children = getChildren(node);
+    if (children.empty()) {
+        return 0;
+    }
+    double supportSum = 0;
+    for (const auto& child: children) {
+        supportSum += getSupport(child);
+    }
+    support[node] = supportSum; // TODO is it good to store this "cached value" inside the "ground truth" object as well?
+    return supportSum;
+}
+
+const vector<double>& SimilarityCouplingGraph::getCoords(const string& node) {
+    auto found = coords.find(node);
+    if (found != coords.end()) {
+        return found->second;
+    }
+    auto dim = getDimensions();
+    vector<double> result(dim, 0);
+    double totalChildSupport = 0;
+    for (const auto& child: getChildren(node)) {
+        double childSupport = getSupport(child);
+        if (childSupport != 0) {
+            const auto& childCoords = getCoords(child);
+            totalChildSupport += childSupport;
+            rep(d, dim) result[d] += childCoords[d] * childSupport;
+        }
+    }
+    rep(d, dim) result[d] /= totalChildSupport;
+    coords[node] = result; // TODO is it good to store this "cached value" inside the "ground truth" object as well?
+    return coords[node];
 }
 
 double SimilarityCouplingGraph::getAbsoluteSupport(const string& node) {
@@ -78,12 +103,8 @@ double jensenShannonArraySimilarity(const vector<double>& a, const vector<double
 double DOCUMENT_SIMILARITY_EXP = 8;  // higher = lower equality values, lower = equality values are all closer to 1
 
 double SimilarityCouplingGraph::getNormalizedCoupling(const string& a, const string& b) {
-    auto coordsA = coords.find(a);
-    if (coordsA == coords.end()) return 0;
-    auto coordsB = coords.find(b);
-    if (coordsB == coords.end()) return 0;
-
-    double distance = jensenShannonArraySimilarity(coordsA->second, coordsB->second);
+    double distance = jensenShannonArraySimilarity(getCoords(a), getCoords(b));
+    if (isnan(distance)) return 0;
     return pow(1 - distance, DOCUMENT_SIMILARITY_EXP);
 }
 
@@ -121,7 +142,7 @@ void SimilarityCouplingGraph::printStatistics() {
         cout << "Empty SimilarityCouplingGraph!" << endl;
         return;
     }
-    auto dim = coords.begin()->second.size();
+    auto dim = getDimensions();
     vector<double> minCoord(dim);
     vector<double> maxCoord(dim);
     for (const auto& [key, val]: coords) {
@@ -146,4 +167,12 @@ void SimilarityCouplingGraph::printStatistics() {
 
 double SimilarityCouplingGraph::getNormalizedSupport(const string& node) {
     return NormalizeSupport::getNormalizedSupport(node);
+}
+
+size_t SimilarityCouplingGraph::getDimensions() {
+    if (coords.empty()) {
+        return 0;
+    } else {
+        return coords.begin()->second.size();
+    }
 }

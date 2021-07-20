@@ -270,6 +270,7 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
         {"findDisagreements", "nodeSetId resultSize graphAmount graphs... patternsComponents...", [](DataStorage& dataStorage, const vector<string>& args) {
             cout << "Starting disagreement analysis!" << endl;
             const auto& ns = *dataStorage.getNodeSet(args[0]);
+            ensure(ns.size() >= 2, "needs at least 2 nodes in the node set to perform this analysis!")
             int resultSize = stoi(args[1]);
             int graphAmount = stoi(args[2]);
             ensure(graphAmount >= 2, "At least two graphs are required!")
@@ -306,6 +307,10 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
                 }
             }
             cout << endl;
+        }},
+        {"exit", "", [](DataStorage& dataStorage, const vector<string>& args) {
+            cout << "Bye" << endl;
+            exit(0);
         }},
 };
 

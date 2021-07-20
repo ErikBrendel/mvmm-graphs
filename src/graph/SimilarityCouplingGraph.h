@@ -4,12 +4,12 @@
 #include <vector>
 #include <unordered_map>
 
-#include "CouplingGraph.h"
+#include "NodeSetCouplingGraph.h"
 #include "graphMixins/NormalizeSupport.h"
 
 using namespace std;
 
-class SimilarityCouplingGraph : public NormalizeSupport, public CouplingGraph {
+class SimilarityCouplingGraph : public NormalizeSupport, public NodeSetCouplingGraph {
 private:
     vector<string> nodes;
     unordered_map<string, vector<double>> coords;
@@ -21,7 +21,7 @@ public:
     const vector<string> & getNodeSet() override;
     void addNode(const string& node, const vector<double>& coords, double support);
     double getSupport(const string& node);
-    vector<double> getCoords(const string& node);
+    const vector<double>& getCoords(const string& node);
     double getAbsoluteSupport(const string &node) override;
     double getNormalizedCoupling(const string &a, const string &b) override;
 
@@ -30,6 +30,8 @@ public:
     void printStatistics() override;
 
     double getNormalizedSupport(const string &node) override;
+
+    size_t getDimensions();
 };
 
 

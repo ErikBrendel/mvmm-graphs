@@ -8,6 +8,7 @@
 class NodeSetCouplingGraph : public CouplingGraph {
 private:
     unordered_map<string, unordered_set<string>> children;
+    bool childrenDictCouldBeOutdated;
 
 public:
     explicit NodeSetCouplingGraph(const string& name);
@@ -15,6 +16,9 @@ public:
     const vector<string>& getNodeSet() override = 0;
 
     virtual const unordered_set<string>& getChildren(const string& node);
+
+protected:
+    void onNodeSetChanged();
 
 private:
     void createChildCache();

@@ -122,6 +122,7 @@ void ExplicitCouplingGraph::removeNode(const string& node) {
     i2node[nodeIndex] = i2node[lastNodeIndex];
     i2node.pop_back();
     node2i[i2node[nodeIndex]] = nodeIndex;
+    onNodeSetChanged();
 }
 
 void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
@@ -243,6 +244,7 @@ uint ExplicitCouplingGraph::getNodeIndex(const string& node) {
     adj.emplace_back();
     i2node.push_back(node);
     node2i[node] = result;
+    onNodeSetChanged();
     return result;
 }
 
@@ -323,6 +325,7 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
         adj[n1][n2] = w;
         adj[n2][n1] = w;
     }
+    onNodeSetChanged();
 }
 
 void ExplicitCouplingGraph::printStatistics() {

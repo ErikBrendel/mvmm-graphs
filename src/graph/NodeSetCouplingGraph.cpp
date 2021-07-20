@@ -7,7 +7,7 @@
 using namespace std;
 
 NodeSetCouplingGraph::NodeSetCouplingGraph(const string& name)
-        : CouplingGraph(name), children() {}
+        : CouplingGraph(name), children(), childrenDictCouldBeOutdated{true} {}
 
 void NodeSetCouplingGraph::createChildCache() {
     if (!children.empty()) {
@@ -22,18 +22,22 @@ void NodeSetCouplingGraph::createChildCache() {
             current = p;
         }
     }
+    childrenDictCouldBeOutdated = false;
 }
 
 unordered_set<string> noChildren;
 
 const unordered_set<string>& NodeSetCouplingGraph::getChildren(const string& node) {
+    if (childrenDictCouldBeOutdated) {
+        createChildCache();
+    }
     auto found = children.find(node);
     if (found == children.end()) {
-        createChildCache();
-        found = children.find(node);
-        if (found == children.end()) {
-            return noChildren;
-        }
+        return noChildren;
     }
     return found->second;
+}
+
+void NodeSetCouplingGraph::onNodeSetChanged() {
+    childrenDictCouldBeOutdated = true;
 }
