@@ -9,6 +9,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 add_executable(coupling_graphs
+        src/errorHandler.cpp
         src/main.cpp
         src/util.cpp
         src/graph/CouplingGraph.cpp
@@ -29,7 +30,7 @@ add_executable(coupling_graphs
         src/timsort.hpp
         src/radixsort.cpp
         src/parallel/ParallelExplicitGraph.cpp
-        src/parallel/ParallelJobsExecutor.h src/parallel/ParallelJobsExecutor.cpp
+        src/parallel/ParallelJobsExecutor.cpp
         )
 
 

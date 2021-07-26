@@ -2,6 +2,7 @@
 
 #include "util.h"
 #include "CommandExecutor.h"
+#include "errorHandler.cpp"
 
 using namespace std;
 
@@ -15,6 +16,7 @@ void mainLoop() {
 }
 
 int main() {
+    installErrorHandler;
     cout.precision(10);
     cout << fixed;
     mainLoop();
