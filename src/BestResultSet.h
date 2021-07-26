@@ -190,7 +190,10 @@ void BestResultSet<UserData>::trimConvexHulls() {
 
 template<typename UserData>
 void BestResultSet<UserData>::trimSampling(int precision, int resultSizeFactor) {
-    if (data.size() < resultKeepSize || data.size() < 10) return;
+    if (data.size() < resultKeepSize || data.size() < 10) {
+        cout << "Trimming skipped - not enough data." << endl;
+        return;
+    }
 
     unordered_set<pair<vector<double>, UserData>> sampledPoints;
     vector<vector<double>> allWeights = generateOneDistributions<double>(dimensionCount, precision);
@@ -203,7 +206,7 @@ void BestResultSet<UserData>::trimSampling(int precision, int resultSizeFactor) 
     }
     //ProgressDisplay::close();
 
-    cout << "Reduced result size from " << data.size() << " to " << sampledPoints.size() << endl;
+    cout << "Reduced result size from " << data.size() << " to " << sampledPoints.size() << "." << endl;
     data.clear();
     for (const auto& d: sampledPoints) {
         data.push_back(d);
