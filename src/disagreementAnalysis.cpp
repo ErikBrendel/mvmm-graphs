@@ -3,7 +3,7 @@
 using namespace std;
 
 
-static const double MIN_SUPPORT_VALUE = 0.000001; // how much relative support a result needs to not be discarded
+static const double MIN_SUPPORT_VALUE = 0; // how much relative support a result needs to not be discarded
 
 void analyzePairSingleDirection(
         const string& a, const string& b,
@@ -27,7 +27,7 @@ void analyzePairSingleDirection(
                 support = min(support, supportValues[i]);
             }
         }
-        if (support >= MIN_SUPPORT_VALUE) {
+        if (support > MIN_SUPPORT_VALUE) {
             // add support to data vectors
             patternMatchScoreData.push_back(-support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
