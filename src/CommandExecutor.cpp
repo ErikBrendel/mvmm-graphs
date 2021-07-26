@@ -312,6 +312,14 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             cout << "Bye" << endl;
             exit(0);
         }},
+        {"echo", "args...", [](DataStorage& dataStorage, const vector<string>& args) {
+            cout << RESULT;
+            rep(i, args.size()) {
+                if (i > 0) cout << "|";
+                cout << args[i];
+            }
+            cout << endl;
+        }},
 };
 
 void printHelpFn() {
