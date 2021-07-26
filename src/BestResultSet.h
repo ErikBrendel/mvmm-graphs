@@ -191,7 +191,7 @@ void BestResultSet<UserData>::trimConvexHulls() {
 template<typename UserData>
 void BestResultSet<UserData>::trimSampling(int precision, int resultSizeFactor) {
     if (data.size() < resultKeepSize || data.size() < 10) {
-        cout << "Trimming skipped - not enough data." << endl;
+        cout << "Trimming skipped - not enough data (" << data.size() << ")." << endl;
         return;
     }
 
