@@ -75,7 +75,7 @@ vector<pair<vector<double>, UserData>> BestResultSet<UserData>::getBest(const ve
         return agg < 0;
     });
     vector<pair<vector<double>, UserData>> result;
-    auto resultSize = resultKeepSize * resultSizeFactor;
+    auto resultSize = min(resultKeepSize * resultSizeFactor, (int)data.size());
     result.reserve(resultSize);
     rep(i, resultSize) {
         result.push_back(data[i]);
