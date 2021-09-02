@@ -29,7 +29,7 @@ void analyzePairSingleDirection(
         }
         if (support > MIN_SUPPORT_VALUE) {
             // add support to data vectors
-            patternMatchScoreData.push_back(-support); // sort by support descending
+            patternMatchScoreData.push_back(1 - support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
             results[p]->add(patternMatchScoreData, {a, b, normalizedCouplingValues});
             normalizedCouplingValues.pop_back(); // remove support again for the next one
