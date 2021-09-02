@@ -2,8 +2,17 @@
 
 using namespace std;
 
-
-static const double MIN_SUPPORT_VALUE = 0; // how much relative support a result needs to not be discarded
+/**
+ * how much relative support a result needs to not be discarded
+ */
+static const double MIN_SUPPORT_VALUE = 0;
+/**
+ * how much each coupling value needs to match its pattern component at least,
+ * so that not the whole module pair is discarded immediately.
+ * With a value slightly higher than zero, we ensure that
+ * no "absolutely-not-matching results" will ever be reported.
+ */
+static const double MIN_PATTERN_COMPONENT_MATCH = 0.00001;
 
 void analyzePairSingleDirection(
         const string& a, const string& b,
@@ -21,13 +30,19 @@ void analyzePairSingleDirection(
         vector<double> patternMatchScoreData;
         const auto& pattern = patterns[p];
         double support = 1;
+        bool allPatternComponentMatchValuesAreValid = true;
         rep(i, graphs.size()) {
             if (!isnan(pattern[i])) {
-                patternMatchScoreData.push_back(abs(pattern[i] - normalizedCouplingValues[i]));
+                double patternComponentMatch = abs(pattern[i] - normalizedCouplingValues[i]);
+                if (patternComponentMatch < MIN_PATTERN_COMPONENT_MATCH) {
+                    allPatternComponentMatchValuesAreValid = false;
+                    break;
+                }
+                patternMatchScoreData.push_back(patternComponentMatch);
                 support = min(support, supportValues[i]);
             }
         }
-        if (support > MIN_SUPPORT_VALUE) {
+        if (allPatternComponentMatchValuesAreValid && support > MIN_SUPPORT_VALUE) {
             // add support to data vectors
             patternMatchScoreData.push_back(1 - support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
