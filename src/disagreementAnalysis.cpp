@@ -7,12 +7,12 @@ using namespace std;
  */
 static const double MIN_SUPPORT_VALUE = 0;
 /**
- * how much each coupling value needs to match its pattern component at least,
+ * how much each coupling value is allowed to deviate from the target pattern value,
  * so that not the whole module pair is discarded immediately.
- * With a value slightly higher than zero, we ensure that
+ * With a value slightly lower than one, we ensure that
  * no "absolutely-not-matching results" will ever be reported.
  */
-static const double MIN_PATTERN_COMPONENT_MATCH = 0.00001;
+static const double MAX_PATTERN_COMPONENT_MISMATCH = 0.9999;
 
 void analyzePairSingleDirection(
         const string& a, const string& b,
@@ -27,26 +27,26 @@ void analyzePairSingleDirection(
         normalizedCouplingValues.push_back(g->getNormalizedCoupling(a, b));
     }
     rep(p, patterns.size()) {
-        vector<double> patternMatchScoreData;
+        vector<double> patternMismatchData;
         const auto& pattern = patterns[p];
         double support = 1;
         bool allPatternComponentMatchValuesAreValid = true;
         rep(i, graphs.size()) {
             if (!isnan(pattern[i])) {
-                double patternComponentMatch = abs(pattern[i] - normalizedCouplingValues[i]);
-                if (patternComponentMatch < MIN_PATTERN_COMPONENT_MATCH) {
+                double patternComponentMismatch = abs(pattern[i] - normalizedCouplingValues[i]);
+                if (patternComponentMismatch > MAX_PATTERN_COMPONENT_MISMATCH) {
                     allPatternComponentMatchValuesAreValid = false;
                     break;
                 }
-                patternMatchScoreData.push_back(patternComponentMatch);
+                patternMismatchData.push_back(patternComponentMismatch);
                 support = min(support, supportValues[i]);
             }
         }
         if (allPatternComponentMatchValuesAreValid && support > MIN_SUPPORT_VALUE) {
             // add support to data vectors
-            patternMatchScoreData.push_back(1 - support); // sort by support descending
+            patternMismatchData.push_back(1 - support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
-            results[p]->add(patternMatchScoreData, {a, b, normalizedCouplingValues});
+            results[p]->add(patternMismatchData, {a, b, normalizedCouplingValues});
             normalizedCouplingValues.pop_back(); // remove support again for the next one
         }
     }
