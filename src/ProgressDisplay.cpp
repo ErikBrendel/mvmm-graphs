@@ -40,7 +40,7 @@ void ProgressDisplay::close() {
 void ProgressDisplay::_printUpdateMaybe(bool forceImmediateUpdate) {
     auto& requiredDeltaTime = hasPrintedOnce ? updateInterval : displayDelay;
     auto now = chrono::steady_clock::now();
-    if (((now - lastShownUpdate) >= requiredDeltaTime) || (forceImmediateUpdate && hasPrintedOnce)) {
+    if (((now - lastShownUpdate) >= requiredDeltaTime) || (forceImmediateUpdate && hasPrintedOnce)) [[unlikely]] {
         cout << "#progress " << current << " " << maximum << " " << description << endl;
         cout.flush();
         lastShownUpdate = now;

@@ -32,9 +32,9 @@ void analyzePairSingleDirection(
         double support = 1;
         bool allPatternComponentMatchValuesAreValid = true;
         rep(i, graphs.size()) {
-            if (!isnan(pattern[i])) {
+            if (!isnan(pattern[i])) [[likely]] {
                 double patternComponentMismatch = abs(pattern[i] - normalizedCouplingValues[i]);
-                if (patternComponentMismatch > MAX_PATTERN_COMPONENT_MISMATCH) {
+                if (patternComponentMismatch > MAX_PATTERN_COMPONENT_MISMATCH) [[unlikely]] {
                     allPatternComponentMatchValuesAreValid = false;
                     break;
                 }
@@ -42,7 +42,7 @@ void analyzePairSingleDirection(
                 support = min(support, supportValues[i]);
             }
         }
-        if (allPatternComponentMatchValuesAreValid && support > MIN_SUPPORT_VALUE) {
+        if (allPatternComponentMatchValuesAreValid && support > MIN_SUPPORT_VALUE) [[likely]] {
             // add support to data vectors
             patternMismatchData.push_back(1 - support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
