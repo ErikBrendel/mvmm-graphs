@@ -22,7 +22,7 @@ void analyzePairSingleDirection(
         vector<shared_ptr<BestResultSet<BrsUserData>>>& results
 ) {
     vector<double> normalizedCouplingValues;
-    normalizedCouplingValues.reserve(graphs.size());
+    normalizedCouplingValues.reserve(graphs.size() + 1);  // +1 for the support value
     for (const auto& g: graphs) {
         normalizedCouplingValues.push_back(g->getNormalizedCoupling(a, b));
     }
