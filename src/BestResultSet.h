@@ -23,6 +23,7 @@ private:
     vector<pair<vector<double>, UserData>> data;
     int totalAmount;
     mt19937 my_brs_random_engine;
+    int nextTrimSize;
 
 public:
     BestResultSet(int dimensionCount, int resultKeepSize);
@@ -40,11 +41,13 @@ public:
     void trimSampling(int precision, int resultSizeFactor);
     void trimSampling();
     void trimMultiSampling();
+    /** if we are way too big - trim very roughly */
+    void trimIfFilledALot();
 };
 
 template<typename UserData>
 BestResultSet<UserData>::BestResultSet(int dimensionCount, int resultKeepSize) :
-    dimensionCount(dimensionCount), resultKeepSize(resultKeepSize), data(), totalAmount(0), my_brs_random_engine(RANDOM_SEED) {}
+    dimensionCount(dimensionCount), resultKeepSize(resultKeepSize), data(), totalAmount(0), my_brs_random_engine(RANDOM_SEED), nextTrimSize(100000) {}
 
 template<typename UserData>
 void BestResultSet<UserData>::addAll(const vector<pair<vector<double>, UserData>>& newData) {
@@ -58,6 +61,7 @@ template<typename UserData>
 void BestResultSet<UserData>::add(const pair<vector<double>, UserData>& newData) {
     data.push_back(newData);
     totalAmount++;
+    trimIfFilledALot();
 }
 
 template<typename UserData>
@@ -222,4 +226,12 @@ template<typename UserData>
 void BestResultSet<UserData>::trimMultiSampling() {
     trimSampling(dimensionCount, 20);
     trimSampling(dimensionCount * 2, 3);
+}
+
+template<typename UserData>
+void BestResultSet<UserData>::trimIfFilledALot() {
+    if (data.size() <= nextTrimSize) [[likely]] return;
+
+    trimSampling(dimensionCount, 20);
+    nextTrimSize = data.size() * 10;
 }
