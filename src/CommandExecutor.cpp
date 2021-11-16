@@ -213,6 +213,22 @@ const vector<tuple<string, string, function<void(DataStorage& dataStorage, const
             ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
             explicitGraph->dilate(stoi(args[1]), stof(args[2]));
         }},
+        {"explicitGetData", "graphId", [](DataStorage& dataStorage, const vector<string>& args) {
+            const auto& graph = dataStorage.getG(args[0]);
+            const auto& explicitGraph = dynamic_pointer_cast<ExplicitCouplingGraph>(graph);
+            ensure(explicitGraph != nullptr, "Can only be used on explicit graphs!")
+            // see ExplicitCouplingGraph::plaintextSave for format specification
+            ostringstream ss;
+            explicitGraph->plaintextSave(ss);
+            string result_string = ss.str();
+            auto resultLines = split(result_string, "\n");
+            cout << RESULT;
+            rep(i, resultLines.size()) {
+                if (i != 0) cout << "|";
+                cout << resultLines[i];
+            }
+            cout << endl;
+        }},
         {"similarityAddNode", "graphId node coords... support", [](DataStorage& dataStorage, const vector<string>& args) {
             const auto& graph = dataStorage.getG(args[0]);
             const auto& similarityGraph = dynamic_pointer_cast<SimilarityCouplingGraph>(graph);
