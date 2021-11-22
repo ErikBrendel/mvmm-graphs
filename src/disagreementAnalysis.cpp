@@ -90,7 +90,7 @@ vector<shared_ptr<BestResultSet<BrsUserData>>> analyzeDisagreements(
         result.push_back(make_shared<BestResultSet<BrsUserData>>(patternDimensions, resultSize));
     }
 
-    ProgressDisplay::init("Analyzing node pairs", square((int) nodeSet.size()));
+    ProgressDisplay::init("Analyzing node pairs", all_pairs_count((int) nodeSet.size()));
     rep_all_pairs(n1, n2, nodeSet.size()) {
         ProgressDisplay::update();
         analyzePair(nodeSet[n1], nodeSet[n2], graphs, patterns, result);
