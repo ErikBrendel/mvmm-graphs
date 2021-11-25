@@ -139,7 +139,7 @@ void ExplicitCouplingGraph::cutoffEdges(double minimumWeight) {
 }
 
 void ExplicitCouplingGraph::removeSmallComponents(int minimumComponentSize) {
-    auto cc = connectedComponents();
+    auto cc = getConnectedComponents();
     vector<string> nodesToRemove;
     for (const auto& component: cc) {
         if (component.size() < minimumComponentSize) {
@@ -331,8 +331,7 @@ void ExplicitCouplingGraph::plaintextLoad(istream& in) {
 void ExplicitCouplingGraph::printStatistics() {
     auto nodeCount = adj.size();
     auto edgeCount = accumulate(all(adj), 0, [](int acc, const unordered_map<uint, double>& edgeList){return acc + edgeList.size();}) / 2;
-    auto cc = connectedComponents();
-    sort(all(cc), [](const unordered_set<uint>& a, const unordered_set<uint>& b){return a.size() < b.size();});
+    auto cc = getConnectedComponents();
     vector<int> ccSizes(cc.size());
     rep(i, cc.size()) {
         ccSizes[i] = cc[i].size();
@@ -383,6 +382,21 @@ vector<tuple<double, string, string>> ExplicitCouplingGraph::getMostLinkedNodePa
     return sortedData;
 }
 
+vector<unordered_set<uint>> ExplicitCouplingGraph::getConnectedComponents() {
+    vector<unordered_set<uint>> result;
+    vector<bool> seen(adj.size(), false);
+    rep(v, adj.size()) {
+        if (!seen[v]) {
+            result.push_back(plainBfs(v));
+            for (uint s: result.back()) {
+                seen[s] = true;
+            }
+        }
+    }
+    sort(all(result), [](const unordered_set<uint>& a, const unordered_set<uint>& b){return a.size() < b.size();});
+    return result;
+}
+
 const unordered_set<string>& ExplicitCouplingGraph::getChildren(const string& node) {
     return NodeSetCouplingGraph::getChildren(node);
 }
@@ -412,18 +426,4 @@ unordered_set<uint> ExplicitCouplingGraph::plainBfs(uint source) {
         }
     }
     return seen;
-}
-
-vector<unordered_set<uint>> ExplicitCouplingGraph::connectedComponents() {
-    vector<unordered_set<uint>> result;
-    vector<bool> seen(adj.size(), false);
-    rep(v, adj.size()) {
-        if (!seen[v]) {
-            result.push_back(plainBfs(v));
-            for (uint s: result.back()) {
-                seen[s] = true;
-            }
-        }
-    }
-    return result;
 }

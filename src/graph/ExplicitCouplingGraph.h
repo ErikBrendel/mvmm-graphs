@@ -43,6 +43,7 @@ public:
     void plaintextLoad(istream& in) override;
     void printStatistics() override;
     vector<tuple<double, string, string>> getMostLinkedNodePairs(int amount) override;
+    vector<unordered_set<uint>> getConnectedComponents();
 
     const unordered_set<string>& getChildren(const string &node) override;
     double getNormalizedSupport(const string& node) override;
@@ -53,7 +54,6 @@ private:
     void addI(uint a, uint b, double delta);
     unordered_map<uint, vector<uint>> getChildrenDict();
     unordered_set<uint> plainBfs(uint source);
-    vector<unordered_set<uint>> connectedComponents();
 };
 
 
