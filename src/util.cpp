@@ -14,20 +14,19 @@ std::vector<std::string> split(const std::string &s, char delim) {
     return split(s, delim, elems);
 }
 
-std::vector<std::string> &split(const std::string &s, const std::string& delims, std::vector<std::string> &elems) {
-    char* tok;
-    char* cstr = new char[s.size() + 1];
-    memcpy(cstr, s.c_str(), s.size() + 1);
-    tok = strtok(cstr, delims.c_str());
-    while (tok != nullptr) {
-        elems.emplace_back(tok);
-        tok = strtok(nullptr, delims.c_str());
+std::vector<std::string> &split(const std::string &s, const std::string& delimiter, std::vector<std::string> &elems) {
+    // see https://stackoverflow.com/a/14266139/4354423 that answers first comment
+    size_t last = 0;
+    size_t next = 0;
+    while ((next = s.find(delimiter, last)) != std::string::npos) {
+        elems.push_back(s.substr(last, next - last));
+        last = next + 1;
     }
-    delete[] cstr;
+    elems.push_back(s.substr(last));
     return elems;
 }
 
-std::vector<std::string> split(const std::string &s, const std::string& delims) {
+std::vector<std::string> split(const std::string &s, const std::string& delimiter) {
     std::vector<std::string> elems;
-    return split(s, delims, elems);
+    return split(s, delimiter, elems);
 }
