@@ -1,12 +1,8 @@
 #include "util.h"
 
 std::vector<std::string> &split(const std::string &s, char delim, std::vector<std::string> &elems) {
-    std::stringstream ss(s);
-    std::string item;
-    while(std::getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
+    std::string delim_s(1, delim);
+    return split(s, delim_s, elems);
 }
 
 std::vector<std::string> split(const std::string &s, char delim) {
@@ -15,6 +11,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
 }
 
 std::vector<std::string> &split(const std::string &s, const std::string& delimiter, std::vector<std::string> &elems) {
+    if (s.empty()) {
+        return elems; // do not return a single empty element, but instead no splitting elements at all!
+    }
     // see https://stackoverflow.com/a/14266139/4354423 that answers first comment
     size_t last = 0;
     size_t next = 0;
