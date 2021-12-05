@@ -12,6 +12,9 @@ using namespace std;
 class ExplicitCouplingGraph : public NormalizeCouplingWithChildren, public NormalizeSupportWithChildren, public NodeSetCouplingGraph {
 private:
     vector<double> supports;
+    /**
+     * sparse (map instead of inner vector) symmetric (adj[a][b] == adj[b][a]) adjacency matrix
+     */
     vector<unordered_map<uint, double>> adj;
     unordered_map<string, uint> node2i;
     vector<string> i2node;
@@ -21,7 +24,7 @@ public:
     const vector<string>& getNodeSet() override;
     vector<string> getCouplingCandidates(const string& node, bool addPredecessors) override;
     void add(const string& a, const string& b, double delta);
-    double get(const string& a, const string& b);
+    double getI(uint a, uint b);
     double getDirectCoupling(const string& a, const string& b) override;
     vector<string> getDirectlyCoupled(const string& node) override;
 

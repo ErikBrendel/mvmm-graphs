@@ -9,7 +9,7 @@ using namespace std;
 
 class NormalizeCouplingWithChildren {
 private:
-    unordered_map<string, double> total_relative_coupling_cache;
+    unordered_map<string, double> totalRelativeCouplingCache;
 public:
 
     virtual const vector<string>& getNodeSet() = 0;
@@ -24,7 +24,6 @@ private:
     void getSelfAndDescendentsRec(const string& node, vector<string>& result);
     double getDirectMultiCoupling(const string& a, const vector<string>& others);
     double getRelativeCoupling(const string& a, const string& b);
-    double getRelativeMultiCoupling(const string& a, const vector<string>& others);
     double getRelativeMultiDirectCoupling(const string& a, const vector<string>& others);
     double getTotalRelativeCoupling(const string& a);
 };

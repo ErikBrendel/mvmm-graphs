@@ -57,14 +57,6 @@ double NormalizeCouplingWithChildren::getRelativeCoupling(const string& a, const
     return getRelativeMultiDirectCoupling(a, getSelfAndDescendants(b));
 }
 
-double NormalizeCouplingWithChildren::getRelativeMultiCoupling(const string& a, const vector<string>& others) {
-    vector<string> directOthers;
-    for (const auto& other: others) {
-        getSelfAndDescendentsRec(other, directOthers);
-    }
-    return getRelativeMultiDirectCoupling(a, directOthers);
-}
-
 double NormalizeCouplingWithChildren::getRelativeMultiDirectCoupling(const string& a, const vector<string>& others) {
     if (others.empty()) {
         return 0;
@@ -77,14 +69,14 @@ double NormalizeCouplingWithChildren::getRelativeMultiDirectCoupling(const strin
 }
 
 double NormalizeCouplingWithChildren::getTotalRelativeCoupling(const string& a) {
-    auto cacheElement = total_relative_coupling_cache.find(a);
-    if (cacheElement != total_relative_coupling_cache.end()) {
+    auto cacheElement = totalRelativeCouplingCache.find(a);
+    if (cacheElement != totalRelativeCouplingCache.end()) {
         return cacheElement->second;
     }
 
     vector<string> aCandidates = getCouplingCandidates(a, false);
     double total_coupling = getRelativeMultiDirectCoupling(a, aCandidates);
-    total_relative_coupling_cache[a] = total_coupling;
+    totalRelativeCouplingCache[a] = total_coupling;
     return total_coupling;
 }
 
@@ -94,7 +86,13 @@ double NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, con
         return 0;
     }
     double targetCoupling = getRelativeCoupling(a, b);
+    double targetCoupling2 = getRelativeCoupling(a, b);
+    ensure(targetCoupling == targetCoupling2,
+           "Relative coupling seems not symmetric! " + to_string(targetCoupling) + " != " + to_string(targetCoupling2) + " (a=" + a + ", b=" + b + ")")
     if (targetCoupling == 0) return 0;
-    double totalCoupling = getTotalRelativeCoupling(a);
-    return targetCoupling / totalCoupling;
+    double totalCouplingA = getTotalRelativeCoupling(a);
+    double totalCouplingB = getTotalRelativeCoupling(b);
+    ensure(targetCoupling > totalCouplingA && targetCoupling > totalCouplingB, "Coupling value is bigger than the total coupling!")
+    // return the biggest of both possible normalized coupling values
+    return targetCoupling / min(totalCouplingA, totalCouplingB);
 }

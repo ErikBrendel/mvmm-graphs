@@ -9,14 +9,6 @@
 // user data: node1, node2, (normalized_coupling_values, support),
 using BrsUserData = tuple<string, string, vector<double>>;
 
-void analyzePairSingleDirection(
-        const string& a, const string& b,
-        const vector<shared_ptr<CouplingGraph>>& graphs,
-        const vector<vector<double>>& patterns,
-        const vector<double>& supportValues,
-        vector<shared_ptr<BestResultSet<BrsUserData>>>& results
-);
-
 void analyzePair(
         const string& node1, const string& node2,
         const vector<shared_ptr<CouplingGraph>>& graphs,

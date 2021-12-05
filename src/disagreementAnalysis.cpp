@@ -14,17 +14,26 @@ static const double MIN_SUPPORT_VALUE = 0;
  */
 static const double MAX_PATTERN_COMPONENT_MISMATCH = 0.9999;
 
-void analyzePairSingleDirection(
-        const string& a, const string& b,
+
+void analyzePair(
+        const string& node1, const string& node2,
         const vector<shared_ptr<CouplingGraph>>& graphs,
         const vector<vector<double>>& patterns,
-        const vector<double>& supportValues,
         vector<shared_ptr<BestResultSet<BrsUserData>>>& results
 ) {
+    if (startsWith(node1, node2) || startsWith(node2, node1)) {
+        return; // ignore nodes that are in a parent-child relation
+    }
+    // for each view: how much support do we have for this node pair (minimum of both node support values)
+    vector<double> supportValues;
+    supportValues.reserve(graphs.size());
     vector<double> normalizedCouplingValues;
     normalizedCouplingValues.reserve(graphs.size() + 1);  // +1 for the support value
     for (const auto& g: graphs) {
-        normalizedCouplingValues.push_back(g->getNormalizedCoupling(a, b));
+        auto supp1 = g->getNormalizedSupport(node1);
+        auto supp2 = g->getNormalizedSupport(node2);
+        supportValues.push_back(min(supp1, supp2));
+        normalizedCouplingValues.push_back(g->getNormalizedCoupling(node1, node2));
     }
     rep(p, patterns.size()) {
         vector<double> patternMismatchData;
@@ -46,30 +55,10 @@ void analyzePairSingleDirection(
             // add support to data vectors
             patternMismatchData.push_back(1 - support); // sort by support descending
             normalizedCouplingValues.push_back(support); // but for display, it should not be inverted
-            results[p]->add(patternMismatchData, {a, b, normalizedCouplingValues});
+            results[p]->add(patternMismatchData, {node1, node2, normalizedCouplingValues});
             normalizedCouplingValues.pop_back(); // remove support again for the next one
         }
     }
-}
-
-void analyzePair(
-        const string& node1, const string& node2,
-        const vector<shared_ptr<CouplingGraph>>& graphs,
-        const vector<vector<double>>& patterns,
-        vector<shared_ptr<BestResultSet<BrsUserData>>>& results
-) {
-    if (startsWith(node1, node2) || startsWith(node2, node1)) {
-        return; // ignore nodes that are in a parent-child relation
-    }
-    // for each view: how much support do we have for this node pair (minimum of both node support values)
-    vector<double> supportValues;
-    for (const auto& g: graphs) {
-        auto supp1 = g->getNormalizedSupport(node1);
-        auto supp2 = g->getNormalizedSupport(node2);
-        supportValues.push_back(min(supp1, supp2));
-    }
-    analyzePairSingleDirection(node1, node2, graphs, patterns, supportValues, results);
-    analyzePairSingleDirection(node2, node1, graphs, patterns, supportValues, results);
 }
 
 

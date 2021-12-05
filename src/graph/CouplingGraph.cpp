@@ -86,16 +86,14 @@ vector<tuple<double, string, string>> CouplingGraph::getMostLinkedNodePairs(int 
     }
     vector<tuple<double, string, string>> sortedData;
     rep_all_pairs(i, j, nodeSet.size()) {
-            const auto& a = nodeSet[i];
-            const auto& b = nodeSet[j];
-            sortedData.emplace_back(max(getNormalizedCoupling(a, b), getNormalizedCoupling(b, a)), a, b);
-            if (sortedData.size() > amount) {
-                sort(all(sortedData), [](const tuple<double, string, string>& e1, const tuple<double, string, string>& e2){
-                    return get<0>(e1) > get<0>(e2);
-                });
-                sortedData.pop_back();
-            }
+        const auto& a = nodeSet[i];
+        const auto& b = nodeSet[j];
+        sortedData.emplace_back(getNormalizedCoupling(a, b), a, b);
+        if (sortedData.size() > amount) {
+            sort(all(sortedData), greater<>());
+            sortedData.pop_back();
         }
+    }
     while (sortedData.size() > amount) {
         sortedData.pop_back();
     }

@@ -25,29 +25,24 @@ void ExplicitCouplingGraph::add(const string& a, const string& b, double delta) 
 
 void ExplicitCouplingGraph::addI(uint a, uint b, double delta) {
     if (a == b) return;
-    auto& edgeList = adj[a];
-    auto existingConnection = edgeList.find(b);
-    if (existingConnection == edgeList.end()) {
-        edgeList[b] = delta;
+    auto& edgeListA = adj[a];
+    auto& edgeListB = adj[b];
+    auto connAB = edgeListA.find(b);
+    if (connAB == edgeListA.end()) {
+        edgeListA[b] = delta;
+        edgeListB[a] = delta;
     } else {
-        existingConnection->second += delta;
-    }
-    auto& edgeList2 = adj[b];
-    auto existingConnection2 = edgeList2.find(a);
-    if (existingConnection2 == edgeList2.end()) {
-        edgeList2[a] = delta;
-    } else {
-        existingConnection2->second += delta;
+        auto connBA = edgeListB.find(a);
+        ensure(connAB->second == connBA->second, "Adjacency matrix lost its symmetry!")
+        connAB->second += delta;
+        connBA->second += delta;
     }
 }
 
-double ExplicitCouplingGraph::get(const string& a, const string& b) {
-    auto ai = node2i.find(a);
-    if (ai == node2i.end()) return 0;
-    auto bi = node2i.find(b);
-    if (bi == node2i.end()) return 0;
-    const auto& edgeList = adj[ai->second];
-    auto conn = edgeList.find(bi->second);
+double ExplicitCouplingGraph::getI(uint a, uint b) {
+    if (a == b) return 0;
+    const auto& edgeList = adj[a];
+    auto conn = edgeList.find(b);
     if (conn == edgeList.end()) {
         return 0;
     } else {
@@ -56,7 +51,11 @@ double ExplicitCouplingGraph::get(const string& a, const string& b) {
 }
 
 double ExplicitCouplingGraph::getDirectCoupling(const string& a, const string& b) {
-    return get(a, b);
+    auto ai = node2i.find(a);
+    if (ai == node2i.end()) return 0;
+    auto bi = node2i.find(b);
+    if (bi == node2i.end()) return 0;
+    return getI(ai->second, bi->second);
 }
 
 vector<string> ExplicitCouplingGraph::getDirectlyCoupled(const string& node) {
@@ -368,6 +367,7 @@ vector<tuple<double, string, string>> ExplicitCouplingGraph::getMostLinkedNodePa
     rep(n1, adj.size()) {
         const auto& a = i2node[n1];
         for (const auto& [n2, w]: adj[n1]) {
+            if (n2 < n1) continue;
             const auto& b = i2node[n2];
             sortedData.emplace_back(w, a, b);
             if (sortedData.size() > amount) {
