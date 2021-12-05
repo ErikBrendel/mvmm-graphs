@@ -92,7 +92,7 @@ double NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, con
     if (targetCoupling == 0) return 0;
     double totalCouplingA = getTotalRelativeCoupling(a);
     double totalCouplingB = getTotalRelativeCoupling(b);
-    ensure(targetCoupling > totalCouplingA && targetCoupling > totalCouplingB, "Coupling value is bigger than the total coupling!")
+    ensure(targetCoupling <= totalCouplingA && targetCoupling <= totalCouplingB, "Coupling value is bigger than the total coupling!")
     // return the biggest of both possible normalized coupling values
     return targetCoupling / min(totalCouplingA, totalCouplingB);
 }
