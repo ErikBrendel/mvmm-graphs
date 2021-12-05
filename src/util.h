@@ -135,8 +135,7 @@ struct hash<std::tuple<TT...>> {
 }
 
 
-
-#define startsWith(a, b) ((a).rfind((b), 0) == 0)
+bool startsWith(const std::string& bigString, const std::string& potentialStart);
 #define stringContains(a, b) ((a).find((b), 0) != std::string::npos)
 
 
