@@ -16,7 +16,7 @@
 // #define endl "\n" // broken, sadly
 #define all(x) std::begin(x), std::end(x)
 #define rep(i, n) for (int i = 0; i < (n); ++i)
-#define rep_all_pairs(i, j, n) for (int i = 0; i < (n) - 1; i++) for(int j = i + 1; j < (n); j++)
+#define rep_all_pairs(i, j, n) for (int i = 0; i < ((int)(n)) - 1; i++) for (int j = i + 1; j < (int)(n); j++)
 #define all_pairs_count(n) ((((n) - 1) * (n)) / 2)
 #define ensure(condition, message) if (!(condition)) throw runtime_error(message);
 
