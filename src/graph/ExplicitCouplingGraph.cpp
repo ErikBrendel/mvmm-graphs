@@ -70,6 +70,20 @@ vector<string> ExplicitCouplingGraph::getDirectlyCoupled(const string& node) {
     return result;
 }
 
+vector<pair<string, double>> ExplicitCouplingGraph::getEdges(const string& node) {
+    const auto i = node2i.find(node);
+    if (i == node2i.end()) return {};
+    const auto& edgeList = adj[i->second];
+    vector<pair<string, double>> result;
+    result.reserve(edgeList.size());
+    for (const auto& entry: edgeList) {
+        if (entry.second != 0) {
+            result.emplace_back(i2node[entry.first], entry.second);
+        }
+    }
+    return result;
+}
+
 void ExplicitCouplingGraph::addSupport(const string& node, double delta) {
     supports[getNodeIndex(node)] += delta;
 }

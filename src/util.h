@@ -230,3 +230,17 @@ std::vector<std::vector<F>> generateOneDistributions(int dim, int precision = 10
 
     return allResults;
 }
+
+/**
+ *  Both vectors have to be naturally sorted, and the first argument will be modified
+ *  to not contain any elements that are present in the second.
+ */
+template <typename V>
+void vectorDifference(std::vector<V>& target, const std::vector<V>& toRemove) {
+    // from https://stackoverflow.com/a/27193182/4354423
+    // https://lemire.me/blog/2017/01/27/how-expensive-are-the-union-and-intersection-of-two-unordered_set-in-c/
+    std::vector<V> result;
+    std::set_difference(all(target), all(toRemove),
+                        std::inserter(result, result.begin()));
+    swap(target, result);
+}

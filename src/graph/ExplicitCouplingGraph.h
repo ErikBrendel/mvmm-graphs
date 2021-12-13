@@ -27,6 +27,7 @@ public:
     double getI(uint a, uint b);
     double getDirectCoupling(const string& a, const string& b) override;
     vector<string> getDirectlyCoupled(const string& node) override;
+    vector<pair<string, double>> getEdges(const string& node) override;
 
     void addSupport(const string& node, double delta);
     double getSupport(const string& node);

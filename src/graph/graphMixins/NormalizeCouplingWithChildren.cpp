@@ -45,39 +45,27 @@ void NormalizeCouplingWithChildren::getSelfAndDescendentsRec(const string& node,
     }
 }
 
-double NormalizeCouplingWithChildren::getDirectMultiCoupling(const string& a, const vector<string>& others) {
-    double result = 0;
-    for (const auto& b : others) {
-        result += getDirectCoupling(a, b);
-    }
-    return result;
-}
-
 double NormalizeCouplingWithChildren::getRelativeCoupling(const string& a, const string& b) {
-    return getRelativeMultiDirectCoupling(a, getSelfAndDescendants(b));
-}
-
-double NormalizeCouplingWithChildren::getRelativeMultiDirectCoupling(const string& a, const vector<string>& others) {
-    if (others.empty()) {
-        return 0;
-    }
-    double result = getDirectMultiCoupling(a, others);
-    for (const auto& child: getChildren(a)) {
-        result += getRelativeMultiDirectCoupling(child, others);
+    auto [aDesc, bDesc] = getDisjointDescendents(a, b);
+    double result = 0;
+    for (const auto& ad: aDesc) {
+        for (const auto& bd: bDesc) {
+            result += getDirectCoupling(ad, bd);
+        }
     }
     return result;
 }
 
-double NormalizeCouplingWithChildren::getTotalRelativeCoupling(const string& a) {
-    auto cacheElement = totalRelativeCouplingCache.find(a);
-    if (cacheElement != totalRelativeCouplingCache.end()) {
-        return cacheElement->second;
+double NormalizeCouplingWithChildren::getTotalOutwardsCoupling(const vector<string>& set) {
+    double result = 0;
+    for (const auto& elem: set) {
+        for (const auto& [other, weight]: getEdges(elem)) {
+            if (find(all(set), other) == set.end()) {
+                result += weight;
+            }
+        }
     }
-
-    vector<string> aCandidates = getCouplingCandidates(a, false);
-    double total_coupling = getRelativeMultiDirectCoupling(a, aCandidates);
-    totalRelativeCouplingCache[a] = total_coupling;
-    return total_coupling;
+    return result;
 }
 
 double NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, const string& b) {
@@ -86,13 +74,30 @@ double NormalizeCouplingWithChildren::getNormalizedCoupling(const string& a, con
         return 0;
     }
     double targetCoupling = getRelativeCoupling(a, b);
-    double targetCoupling2 = getRelativeCoupling(a, b);
+    double targetCoupling2 = getRelativeCoupling(b, a);
     ensure(targetCoupling == targetCoupling2,
            "Relative coupling seems not symmetric! " + to_string(targetCoupling) + " != " + to_string(targetCoupling2) + " (a=" + a + ", b=" + b + ")")
     if (targetCoupling == 0) return 0;
-    double totalCouplingA = getTotalRelativeCoupling(a);
-    double totalCouplingB = getTotalRelativeCoupling(b);
+
+    auto [aDesc, bDesc] = getDisjointDescendents(a, b);
+
+
+    double totalCouplingA = getTotalOutwardsCoupling(aDesc);
+    double totalCouplingB = getTotalOutwardsCoupling(bDesc);
     ensure(targetCoupling <= totalCouplingA && targetCoupling <= totalCouplingB, "Coupling value is bigger than the total coupling!")
     // return the biggest of both possible normalized coupling values
     return targetCoupling / min(totalCouplingA, totalCouplingB);
+}
+
+pair<vector<string>, vector<string>> NormalizeCouplingWithChildren::getDisjointDescendents(const string& a, const string& b) {
+    auto aDesc = getSelfAndDescendants(a);
+    sort(all(aDesc));
+    auto bDesc = getSelfAndDescendants(b);
+    sort(all(bDesc));
+    if (startsWith(a, b)) {
+        vectorDifference(bDesc, aDesc);
+    } else if (startsWith(b, a)) {
+        vectorDifference(aDesc, bDesc);
+    }
+    return {aDesc, bDesc};
 }
