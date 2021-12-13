@@ -35,7 +35,7 @@ pair<double, double> NormalizeSupport::getAbsoluteSupportMedianAndMax() {
         rep(i, nodes.size()) {
             supports[i] = getAbsoluteSupport(nodes[i]);
         }
-        medianMaximumCache.first = accumulate(all(supports), 0.0f) / (double) nodes.size();
+        medianMaximumCache.first = accumulate(all(supports), 0.0) / (double) nodes.size();
         medianMaximumCache.second = *max_element(all(supports));
         // std::cout << "Mean: " << medianMaximumCache.first << ", max: " << medianMaximumCache.second << endl;
     }

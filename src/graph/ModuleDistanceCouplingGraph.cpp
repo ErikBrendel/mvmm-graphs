@@ -31,7 +31,7 @@ double ModuleDistanceCouplingGraph::getNormalizedCoupling(const string& a, const
     int dist = path_module_distance(a, b);
     // one is subtracted from the dist, so that the lowest possible dist (1) a perfect coupling score
     if (dist > 0) dist--;
-    double base = 1.1f;
+    double base = 1.1;
     return (double) pow(base, -dist);
 }
 

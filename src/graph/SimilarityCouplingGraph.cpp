@@ -89,7 +89,7 @@ double jensenShannonArraySimilarity(const vector<double>& a, const vector<double
 
     vector<double> m(aNorm.size());
     rep(i, aNorm.size()) {
-        m[i] = (aNorm[i] + bNorm[i]) / 2.0f;
+        m[i] = (aNorm[i] + bNorm[i]) / 2.0;
     }
     double js = 0;
     rep(i, aNorm.size()) {

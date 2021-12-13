@@ -39,8 +39,8 @@ public:
 
     void cutoffEdges(double minimumWeight);
     void removeSmallComponents(int minimumComponentSize);
-    void propagateDown(int layers = 1, double weightFactor = 0.2f);
-    void dilate(int iterations = 1, double weightFactor = 0.2f);
+    void propagateDown(int layers = 1, double weightFactor = 0.2);
+    void dilate(int iterations = 1, double weightFactor = 0.2);
 
 
     void plaintextSave(ostream& out) override;
