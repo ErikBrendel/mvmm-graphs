@@ -15,7 +15,28 @@ const vector<string>& ExplicitCouplingGraph::getNodeSet() {
 }
 
 vector<string> ExplicitCouplingGraph::getCouplingCandidates(const string& node, bool addPredecessors) {
-    return NormalizeCouplingWithChildren::getCouplingCandidates(node, addPredecessors);
+    vector<string> thisAndDescendants = getSelfAndDescendants(node);
+
+    vector<string> directCouplingCandidates;
+    for (const auto& n: thisAndDescendants) {
+        for (const auto& n2: getDirectlyCoupled(n)) {
+            directCouplingCandidates.push_back(n2);
+        }
+    }
+
+    unordered_set<string> result;
+    result.insert("");
+    for (const auto& other: directCouplingCandidates) {
+        string current = other;
+        while (result.insert(other).second) {  // while not present yet
+            if (!addPredecessors) break;
+            current = CouplingGraph::getParent(current);
+        }
+    }
+    result.erase("");
+    vector<string> resultVec(all(result));
+
+    return resultVec;
 }
 
 void ExplicitCouplingGraph::add(const string& a, const string& b, double delta) {
@@ -413,6 +434,10 @@ vector<unordered_set<uint>> ExplicitCouplingGraph::getConnectedComponents() {
 
 const unordered_set<string>& ExplicitCouplingGraph::getChildren(const string& node) {
     return NodeSetCouplingGraph::getChildren(node);
+}
+
+vector<string> ExplicitCouplingGraph::getSelfAndDescendants(const string& node) {
+    return NodeSetCouplingGraph::getSelfAndDescendants(node);
 }
 
 double ExplicitCouplingGraph::getNormalizedSupport(const string& node) {

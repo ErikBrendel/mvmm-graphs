@@ -50,6 +50,7 @@ public:
     vector<unordered_set<uint>> getConnectedComponents();
 
     const unordered_set<string>& getChildren(const string &node) override;
+    vector<string> getSelfAndDescendants(const string &node) override;
     double getNormalizedSupport(const string& node) override;
     double getNormalizedCoupling(const string& a, const string& b) override;
 

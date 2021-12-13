@@ -16,12 +16,14 @@ public:
     const vector<string>& getNodeSet() override = 0;
 
     virtual const unordered_set<string>& getChildren(const string& node);
+    virtual vector<string> getSelfAndDescendants(const string& node);
 
 protected:
     void onNodeSetChanged();
 
 private:
     void createChildCache();
+    void getSelfAndDescendentsRec(const string& node, vector<string>& result);
 };
 
 

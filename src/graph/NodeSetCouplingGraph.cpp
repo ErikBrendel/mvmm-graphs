@@ -38,6 +38,19 @@ const unordered_set<string>& NodeSetCouplingGraph::getChildren(const string& nod
     return found->second;
 }
 
+vector<string> NodeSetCouplingGraph::getSelfAndDescendants(const string& node) {
+    vector<string> result;
+    getSelfAndDescendentsRec(node, result);
+    return result;
+}
+
+void NodeSetCouplingGraph::getSelfAndDescendentsRec(const string& node, vector<string>& result) {
+    result.push_back(node);
+    for (const auto& child: getChildren(node)) {
+        getSelfAndDescendentsRec(child, result);
+    }
+}
+
 void NodeSetCouplingGraph::onNodeSetChanged() {
     childrenDictCouldBeOutdated = true;
 }

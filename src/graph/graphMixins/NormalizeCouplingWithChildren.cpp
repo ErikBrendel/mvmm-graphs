@@ -7,44 +7,6 @@
 
 using namespace std;
 
-vector<string> NormalizeCouplingWithChildren::getCouplingCandidates(const string& node, bool addPredecessors) {
-    vector<string> thisAndDescendants = getSelfAndDescendants(node);
-
-    vector<string> directCouplingCandidates;
-    for (const auto& n: thisAndDescendants) {
-        for (const auto& n2: getDirectlyCoupled(n)) {
-            directCouplingCandidates.push_back(n2);
-        }
-    }
-
-    unordered_set<string> result;
-    result.insert("");
-    for (const auto& other: directCouplingCandidates) {
-        string current = other;
-        while (result.insert(other).second) {  // while not present yet
-            if (!addPredecessors) break;
-            current = CouplingGraph::getParent(current);
-        }
-    }
-    result.erase("");
-    vector<string> resultVec(all(result));
-
-    return resultVec;
-}
-
-vector<string> NormalizeCouplingWithChildren::getSelfAndDescendants(const string& node) {
-    vector<string> result;
-    getSelfAndDescendentsRec(node, result);
-    return result;
-}
-
-void NormalizeCouplingWithChildren::getSelfAndDescendentsRec(const string& node, vector<string>& result) {
-    result.push_back(node);
-    for (const auto& child: getChildren(node)) {
-        getSelfAndDescendentsRec(child, result);
-    }
-}
-
 double NormalizeCouplingWithChildren::getTotalOutwardsCoupling(const string& name, const vector<string>& set, bool simpleCase) {
     if (simpleCase) {
         if (simpleTotalOutwardsCouplingCache.find(name) == simpleTotalOutwardsCouplingCache.end()) {
