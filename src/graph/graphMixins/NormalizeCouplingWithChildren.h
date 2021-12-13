@@ -8,6 +8,8 @@
 using namespace std;
 
 class NormalizeCouplingWithChildren {
+private:
+    unordered_map<string, double> simpleTotalOutwardsCouplingCache;
 public:
 
     virtual const vector<string>& getNodeSet() = 0;
@@ -21,7 +23,6 @@ public:
 private:
     vector<string> getSelfAndDescendants(const string& node);
     void getSelfAndDescendentsRec(const string& node, vector<string>& result);
-    double getRelativeCoupling(const string& a, const string& b);
-    double getTotalOutwardsCoupling(const vector<string>& set);
-    pair<vector<string>, vector<string>> getDisjointDescendents(const string& a, const string& b);
+    double getTotalOutwardsCoupling(const string& name, const vector<string>& set, bool simpleCase);
+    double calculateTotalOutwardsCoupling(const vector<string>& set);
 };
