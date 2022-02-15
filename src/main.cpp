@@ -21,8 +21,5 @@ int main() {
     cout << fixed;
     mainLoop();
 
-    // BestResultSet<int> brs(4, 100);
-    // brs.trim();
-
     return 0;
 }

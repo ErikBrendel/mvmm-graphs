@@ -1,0 +1,4 @@
+This package contains my unfinished and thus unused attempts at using multithreading to speed up graph operations like the post-processing steps of *dilation* and *down-propagation*.
+The approach would be similar to a parallelized map-reduce pipeline:
+- In the mapping step, the task queue for the workers contains one job per node, so that they can calculate all the effects of that single node on the graph. Each worker thread operates on its own intermediate graph data structure, aggregating the results of all the tasks itself has done.
+- In the reduce (merge) step, the intermediate result graphs (which are now not written to anymore, so can be safely read from multiple threads in parallel) are now merged onto a single destination instance, again in parallel with a single task for each node.
