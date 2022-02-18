@@ -53,7 +53,9 @@ const vector<double>& SimilarityCouplingGraph::getCoords(const string& node) {
             rep(d, dim) result[d] += childCoords[d] * childSupport;
         }
     }
-    rep(d, dim) result[d] /= totalChildSupport;
+    if (totalChildSupport != 0) {
+        rep(d, dim) result[d] /= totalChildSupport;
+    }
     coords[node] = result; // TODO is it good to store this "cached value" inside the "ground truth" object as well?
     return coords[node];
 }
